@@ -12,14 +12,14 @@ local function AddPlayerStats(msg, player)
     if result then
         local characterName = result:GetString(0)
         local skills = {
-            {name = "Woodcutting", levelIndex = 1, xpIndex = 2},
             {name = "Attack", levelIndex = 3, xpIndex = 4},
             {name = "Defence", levelIndex = 5, xpIndex = 6},
             {name = "Strength", levelIndex = 7, xpIndex = 8},
             {name = "Magic", levelIndex = 9, xpIndex = 10},
             {name = "Range", levelIndex = 11, xpIndex = 12},
             {name = "Hitpoint", levelIndex = 13, xpIndex = 14},
-            {name = "Prayer", levelIndex = 15, xpIndex = 16}
+            {name = "Prayer", levelIndex = 15, xpIndex = 16},
+            {name = "Woodcutting", levelIndex = 1, xpIndex = 2}
         }
     
         for _, skill in ipairs(skills) do
