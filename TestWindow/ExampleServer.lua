@@ -7,7 +7,8 @@ local AttributesAuraIds = { 7464, 7471, 7477, 7468, 7474 } -- Strength, Agility,
 local function AddPlayerStats(msg, player)
     local querySelect = "SELECT * FROM custom_levels WHERE characterName = 'yoyo'"
     local result = CharDBQuery(querySelect)
-    local statsText = "Skill Information:\n"
+    local statsTextLevel1 = ""
+    local statsTextLevel2 = ""
     
     if result then
         local characterName = result:GetString(0)
@@ -19,22 +20,49 @@ local function AddPlayerStats(msg, player)
             {name = "Range", levelIndex = 11, xpIndex = 12},
             {name = "Hitpoint", levelIndex = 13, xpIndex = 14},
             {name = "Prayer", levelIndex = 15, xpIndex = 16},
-            {name = "Woodcutting", levelIndex = 1, xpIndex = 2}
+            {name = "Woodcutting", levelIndex = 1, xpIndex = 2},
+            {name = "Hitpoints", levelIndex = 13, xpIndex = 14},
+            {name = "Prayer", levelIndex = 15, xpIndex = 16},
+            {name = "Fishing", levelIndex = 23, xpIndex = 24},
+            {name = "Cooking", levelIndex = 29, xpIndex = 30},
+            {name = "Firemaking", levelIndex = 31, xpIndex = 32},
+            {name = "Crafting", levelIndex = 17, xpIndex = 18},
+            {name = "Smithing", levelIndex = 21, xpIndex = 22},
+            {name = "Mining", levelIndex = 19, xpIndex = 20},
+            {name = "Herblore", levelIndex = 33, xpIndex = 34},
+            {name = "Agility", levelIndex = 35, xpIndex = 36},
+            {name = "Thieving", levelIndex = 37, xpIndex = 38},
+            {name = "Slayer", levelIndex = 39, xpIndex = 40},
+            {name = "Farming", levelIndex = 41, xpIndex = 42},
+            {name = "Runecrafting", levelIndex = 43, xpIndex = 44},
         }
     
-        for _, skill in ipairs(skills) do
+        local totalSkills = #skills
+        local halfSkills = math.floor(totalSkills / 2)
+    
+        for i, skill in ipairs(skills) do
             local level = result:GetUInt32(skill.levelIndex)
             local xp = tostring(result:GetUInt64(skill.xpIndex))
     
-            statsText = statsText .. skill.name .. " Level: " .. level .. "\n"
-            statsText = statsText .. skill.name .. " XP: " .. xp .. "\n\n"
+            if i <= halfSkills then
+                statsTextLevel1 = statsTextLevel1 .. skill.name .. " Level: " .. level .. "\n"
+                statsTextLevel1 = statsTextLevel1 .. skill.name .. " XP: " .. xp .. "\n\n"
+            else
+                statsTextLevel2 = statsTextLevel2 .. skill.name .. " Level: " .. level .. "\n"
+                statsTextLevel2 = statsTextLevel2 .. skill.name .. " XP: " .. xp .. "\n\n"
+            end
+    
+            -- Add a line break every two items
         end
+    
     end
+    
     
     local guid = player:GetGUIDLow()
     local spend, left = AttributesPointsSpend[guid], AttributesPointsLeft[guid]
-    msg:Add("Kaev", "SetText", statsText)
-    return msg:Add("Kaev", "SetStats", left, AIO.unpack(spend), statsText)
+    msg:Add("Kaev", "SetText1", statsTextLevel1)
+    msg:Add("Kaev", "SetText2", statsTextLevel2)
+    return msg:Add("Kaev", "SetStats", left, AIO.unpack(spend), statsTextLevel1)
 end
 
 AIO.AddOnInit(AddPlayerStats)
