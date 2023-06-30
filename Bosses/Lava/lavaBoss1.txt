@@ -1,0 +1,23 @@
+Lava Boss #1
+
+1. The code checks the boss's health and determines the current phase based on the health percentage.
+2. If the current phase is 3 (Magma Burst Phase):
+   - The boss erupts, causing molten magma to burst from the ground in random locations.
+   - Players caught within the magma burst suffer high damage and are knocked back.
+   - Players must quickly react and avoid the erupting magma to prevent severe damage.
+3. If the current phase is 5 (Volcanic Tremor Phase):
+   - The boss triggers a powerful seismic tremor, shaking the arena.
+   - Cracks form on the ground, releasing geysers of lava that shoot up intermittently.
+   - Players must carefully navigate the arena, avoiding the erupting geysers to avoid damage.
+4. If the current phase is 7 (Lava Surge Phase):
+   - The boss summons streams of lava that flow across the arena in specific patterns.
+   - Standing in the flowing lava inflicts continuous damage and knocks players back.
+   - Players must observe the lava flow patterns and time their movement to cross safely.
+5. If the current phase is 9 (Infernal Transformation Phase):
+   - The boss undergoes a fiery transformation, increasing its size and power.
+   - The boss gains new abilities and mechanics during this phase.
+   - Players must adapt to the boss's enhanced abilities and adjust their strategies accordingly.
+6. The current phase is announced with a mighty roar and visual effect if it hasn't been announced before.
+7. The boss casts the spell associated with the current phase on its target.
+
+Feel free to customize and expand upon these phases and events to create a thrilling and unique encounter for your volcanic guardian boss!

@@ -1,0 +1,6 @@
+lava 3 line 221
+lava 1 line 78 
+forest 5 line 80 94
+forest 3 line 221
+forest 4 line 80
+forest boss 1 line 92 93 96

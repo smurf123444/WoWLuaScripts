@@ -1,0 +1,24 @@
+Certainly! Here's another example of phases and events for a jungle boss in version 3.3.5a:
+
+Forest Boss 4:
+
+1. The code checks the boss's health and determines the current phase based on the health percentage.
+2. If the current phase is 3 (Toxic Cloud Phase):
+   - The boss releases a toxic cloud that fills a portion of the arena.
+   - Players caught within the cloud suffer damage over time and a debuff that reduces their healing received.
+   - Players must position themselves strategically to avoid the toxic cloud and cleanse the debuff.
+3. If the current phase is 5 (Summon Totems Phase):
+   - The boss summons a set of totems around the arena, each with a different effect.
+   - Totems can heal the boss, apply harmful debuffs to players, or buff the boss's damage.
+   - Players must prioritize destroying the totems while managing boss mechanics.
+4. If the current phase is 7 (Stampede Phase):
+   - The boss charges across the arena, leaving a trail of damaging energy in its path.
+   - Players need to avoid the stampede path to prevent taking damage.
+   - The boss may also target random players with a charge ability, requiring quick movement to avoid being hit.
+5. If the current phase is 9 (Frenzy Phase):
+   - The boss enters a state of frenzy, gaining increased attack speed and movement speed.
+   - Players need to be on high alert and react quickly to the boss's increased aggression.
+6. The current phase is announced with a yell and sound effect if it hasn't been announced before.
+7. The boss casts the spell associated with the current phase on its target.
+
+Feel free to modify and expand upon these phases and events to create a unique and challenging jungle boss encounter in your game!

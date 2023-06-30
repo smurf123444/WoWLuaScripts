@@ -1,0 +1,22 @@
+Jungle Boss #3:
+
+1. The code checks the boss's health and determines the current phase based on the health percentage.
+2. If the current phase is 2 (Summon Adds Phase):
+   - The boss summons a wave of smaller adds to join the fight.
+   - Each add has its own set of abilities and mechanics, posing a threat to players.
+   - Players must prioritize and manage the adds while dealing with boss mechanics.
+3. If the current phase is 4 (Berserk Phase):
+   - The boss enters a berserk state, increasing its damage and attack speed significantly.
+   - Players need to quickly defeat the boss before it overwhelms the raid.
+4. If the current phase is 6 (Roots Trap Phase):
+   - Roots spawn randomly around the room, creating obstacles for players.
+   - Players caught in the roots are immobilized and need assistance from others to break free.
+   - Breaking the roots requires dealing damage or using specific abilities.
+5. If the current phase is 8 (Shadow Illusion Phase):
+   - The boss creates multiple shadow illusions that mirror its abilities and mechanics.
+   - Players need to identify the real boss among the illusions to effectively deal damage.
+6. The current phase is announced with a yell and sound effect if it hasn't been announced before.
+7. The boss casts the spell associated with the current phase on its target.
+
+Remember that these are just examples, and you can customize and expand upon them based on your specific boss design and encounter requirements.
+
