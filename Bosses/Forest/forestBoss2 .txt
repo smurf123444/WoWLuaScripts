@@ -1,5 +1,33 @@
 Forest Boss #2
 
-TBD
+Phase 1: Nature's Guardian
+
+Players enter a mystical forest clearing and encounter the Forest Guardian, a towering ancient creature.
+The boss periodically summons smaller forest spirits to aid in battle.
+Players must defeat the forest spirits while avoiding the boss's powerful nature-based attacks.
+
+Phase 2: Enchanted Grove
+
+As the boss's health decreases, it taps into the magic of the surrounding forest, transforming the area into an enchanted grove.
+The grove becomes filled with magical barriers and obstacles that impede player movement.
+Players must find and activate ancient runes scattered throughout the grove to dispel the barriers and progress.
+
+Phase 3: Vengeful Roots
+
+At a certain health threshold, the boss channels its fury into the forest's roots, causing them to rise and attack players.
+The boss becomes immune to damage while the roots are active.
+Players must quickly locate and destroy the vengeful roots to weaken the boss's defenses.
+
+Phase 4: Thorns of Retribution
+
+Once the roots are destroyed, the boss retaliates by covering itself in thorns, increasing its armor and damage output.
+The boss periodically charges towards players, leaving behind a trail of damaging thorns.
+Players must avoid the boss's charges and find opportunities to attack while mitigating the thorn damage.
+
+Phase 5: Nature's Resurgence
+
+In this final phase, the boss taps into the true power of the forest, rejuvenating itself and gaining new abilities.
+The boss periodically summons powerful elemental manifestations of nature to aid in the fight.
+Players must deal with both the boss's attacks and the elemental threats, coordinating their efforts to defeat the boss.
 
 Feel free to customize and expand upon these phases and events to create a thrilling and unique encounter for your volcanic guardian boss!

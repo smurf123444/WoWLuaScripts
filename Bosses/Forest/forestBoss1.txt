@@ -1,5 +1,34 @@
 Forest Boss #1
 
-TBD
+Phase 1: Entangled Frenzy
+
+Players enter a dense forest area and find the Forest Boss entangled in vines.
+The boss periodically summons forest creatures to aid it in battle.
+Players must defeat the forest creatures while avoiding the boss's powerful melee attacks.
+
+Phase 2: Nature's Wrath
+
+As the boss's health decreases, it taps into the power of nature and gains new abilities.
+The boss creates thorny vines that impede player movement and deal damage on contact.
+Players must dodge the vines and find openings to attack the boss.
+
+Phase 3: Ancient Roots
+
+At a certain health threshold, the boss retreats into the ground and roots itself.
+The boss becomes invulnerable while its roots spread throughout the arena.
+Players must locate and destroy the roots to weaken the boss's defenses.
+
+Phase 4: Overgrowth Surge
+
+Once the roots are destroyed, the boss erupts from the ground in a burst of foliage.
+The boss gains increased movement speed and starts summoning more powerful forest creatures.
+Players must continue to defeat the boss's minions while evading its devastating charges.
+
+Phase 5: Nature's Retaliation
+
+In this final phase, the boss unleashes its ultimate power, causing the forest to come alive.
+The environment becomes hostile, with falling branches, poisonous spores, and hazardous terrain.
+Players must navigate the treacherous landscape and deliver a final assault on the boss to claim victory.
+Note: The specific mechanics and abilities for each phase can be tailored to fit the desired gameplay experience and challenge level.
 
 Feel free to customize and expand upon these phases and events to create a thrilling and unique encounter for your volcanic guardian boss!

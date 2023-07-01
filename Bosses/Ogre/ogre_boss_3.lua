@@ -1,4 +1,4 @@
-local RichardHeart = {}
+--[[ local RichardHeart = {}
 local announcedPhase = 0
  -- Tracks the current phase
  -- Tracks the last announced phase
@@ -67,60 +67,6 @@ function RichardHeart.CheckHealth(event, creature, world)
 
     local PHASES = {"Assault Bot Phase", "Tower Defense Phase", "Demolisher/Siege Vehicle Detonation", "Mounted Assault", "Hard Mode"} -- List of phase names
 
-
-    for i = #PHASES, 2, -1 do
-        if creature:HealthBelowPct((#PHASES - i + 1) * 20) then
-            world:PlayDirectSound(17257)
-            currentPhase = i
-            break
-        end
-    end
-        local SPELLS = {
-            -- Leviathan basic
-            PURSUED = 62374,
-            GATHERING_SPEED = 62375,
-            BATTERING_RAM = 62376,
-            FLAME_VENTS = 62396,
-            MISSILE_BARRAGE = 62400,
-            NAPALM_10 = 63666,
-            NAPALM_25 = 65026,
-            INVIS_AND_STEALTH_DETECT = 18950,
-            TRANSITUS_SHIELD_IMPACT = 48387,
-    
-            -- Shutdown spells
-            SYSTEMS_SHUTDOWN = 62475,
-            OVERLOAD_CIRCUIT = 62399,
-    
-            -- Hard mode
-            TOWER_OF_STORMS = 65076,
-            TOWER_OF_FLAMES = 65075,
-            TOWER_OF_FROST = 65077,
-            TOWER_OF_LIFE = 64482,
-    
-            HODIRS_FURY = 62533,
-            FREYA_WARD = 62906,
-            MIMIRONS_INFERNO = 62909,
-            THORIMS_HAMMER = 62911,
-    
-            FREYA_DUMMY_BLUE = 63294,
-            FREYA_DUMMY_GREEN = 63295,
-            FREYA_DUMMY_YELLOW = 63292,
-    
-            -- Leviathan turret spell
-            SEARING_FLAME = 62402,
-            -- On turret Destroy
-            SMOKE_TRAIL = 63575,
-    
-            -- Pool of tar blaze
-            BLAZE = 62292,
-    
-            -- Pyrite
-            LIQUID_PYRITE = 62494,
-            DUSTY_EXPLOSION = 63360,
-            DUST_CLOUD_IMPACT = 54740,
-        }
-    
-    
         -- Determine the current phase based on specific conditions or thresholds
 
     
@@ -152,7 +98,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local vineX = creature:GetX() + math.random(-5, 5)
                 local vineY = creature:GetY() + math.random(-5, 5)
                 local vineZ = creature:GetZ()
-                local vine = creature:SummonGameObject(201596, vineX, vineY, vineZ, creature:GetO(), 0, 0, 0, 0) -- Replace 54321 with the desired game object ID for the vine
+                local vine = creature:SummonGameObject(6292, vineX, vineY, vineZ, creature:GetO(), 0, 0, 0, 0) -- Replace 54321 with the desired game object ID for the vine
                 vine:SetPhaseMask(1) -- Set the phase mask for the vines
             end
             -- Handle mechanics and abilities related to the towers
@@ -218,14 +164,15 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     
         -- Cast the spell associated with the current phase on the boss's target (if applicable)
-        creature:CastSpell(creature:GetVictim(), SPELLS[currentPhase], true)
+    --    creature:CastSpell(creature:GetVictim(), SPELLS[currentPhase], true)
     
         -- Announcement or visual effect logic here
 end
     
 
-RegisterCreatureEvent(200009, 1, RichardHeart.OnEnterCombat)
-RegisterCreatureEvent(200009, 2, RichardHeart.OnLeaveCombat)
-RegisterCreatureEvent(200009, 4, RichardHeart.OnDied)
-RegisterCreatureEvent(200009, 5, RichardHeart.OnSpawn)
-RegisterCreatureEvent(200009, 9, RichardHeart.CheckHealth)
+RegisterCreatureEvent(200006, 1, RichardHeart.OnEnterCombat)
+RegisterCreatureEvent(200006, 2, RichardHeart.OnLeaveCombat)
+RegisterCreatureEvent(200006, 4, RichardHeart.OnDied)
+RegisterCreatureEvent(200006, 5, RichardHeart.OnSpawn)
+RegisterCreatureEvent(200006, 9, RichardHeart.CheckHealth)
+ ]]

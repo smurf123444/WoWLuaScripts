@@ -160,8 +160,8 @@ function RichardHeart.CheckHealth(event, creature, world)
 end
 
 
-RegisterCreatureEvent(200002, 1, RichardHeart.OnEnterCombat)
-RegisterCreatureEvent(200002, 2, RichardHeart.OnLeaveCombat)
-RegisterCreatureEvent(200002, 4, RichardHeart.OnDied)
-RegisterCreatureEvent(200002, 5, RichardHeart.OnSpawn)
-RegisterCreatureEvent(200002, 9, RichardHeart.CheckHealth)
+RegisterCreatureEvent(200003, 1, RichardHeart.OnEnterCombat)
+RegisterCreatureEvent(200003, 2, RichardHeart.OnLeaveCombat)
+RegisterCreatureEvent(200003, 4, RichardHeart.OnDied)
+RegisterCreatureEvent(200003, 5, RichardHeart.OnSpawn)
+RegisterCreatureEvent(200003, 9, RichardHeart.CheckHealth)

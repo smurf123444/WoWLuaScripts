@@ -1,4 +1,4 @@
-local RichardHeart = {}
+--[[ local RichardHeart = {}
 local announcedPhase = 0
  -- Tracks the current phase
  -- Tracks the last announced phase
@@ -168,8 +168,9 @@ end
 
 
 
-RegisterCreatureEvent(200005, 1, RichardHeart.OnEnterCombat)
-RegisterCreatureEvent(200005, 2, RichardHeart.OnLeaveCombat)
-RegisterCreatureEvent(200005, 4, RichardHeart.OnDied)
-RegisterCreatureEvent(200005, 5, RichardHeart.OnSpawn)
-RegisterCreatureEvent(200005, 9, RichardHeart.CheckHealth)
+RegisterCreatureEvent(200001, 1, RichardHeart.OnEnterCombat)
+RegisterCreatureEvent(200001, 2, RichardHeart.OnLeaveCombat)
+RegisterCreatureEvent(200001, 4, RichardHeart.OnDied)
+RegisterCreatureEvent(200001, 5, RichardHeart.OnSpawn)
+RegisterCreatureEvent(200001, 9, RichardHeart.CheckHealth)
+ ]]

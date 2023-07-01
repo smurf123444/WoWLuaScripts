@@ -1,4 +1,4 @@
-
+--[[ 
 
  local RichardHeart = {}
 local announcedPhase = 0
@@ -202,7 +202,7 @@ function RichardHeart.CheckHealth(event, creature, world)
 
         function Lava(eventid, delay, repeats, worldobject)
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200004)
+            local targets = worldobject:GetCreaturesInRange(range, 200007)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -250,3 +250,4 @@ RegisterCreatureEvent(200004, 2, RichardHeart.OnLeaveCombat)
 RegisterCreatureEvent(200004, 4, RichardHeart.OnDied)
 RegisterCreatureEvent(200004, 5, RichardHeart.OnSpawn)
 RegisterCreatureEvent(200004, 9, RichardHeart.CheckHealth)
+ ]]

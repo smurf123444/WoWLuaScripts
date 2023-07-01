@@ -1,0 +1,28 @@
+Here's a simple list summarizing the functionality of the Jungle Boss:
+
+
+JUNGLE BOSS #1
+
+1. The code checks the boss's health and determines the current phase based on the health percentage.
+2. If the current phase is 4 (Transform & Movement Phase):
+   - The boss moves to a specific location (-9113, 400, 92).
+   - The player follows the boss for 5 yards.
+   - A puff of smoke effect is spawned and then despawned after 5 seconds.
+   - The boss's model is transformed to the desired display ID.
+   - Additional abilities or mechanics specific to the transformation phase can be added.
+3. If the current phase is 6 (Hazard Phase):
+   - An environmental hazard is summoned using a game object ID.
+   - The hazard is activated.
+   - The terrain's weather is modified using specific coordinates.
+   - Additional environmental phase mechanics can be added.
+4. If the current phase is 8 (Puzzle phase):
+   - It checks if the puzzle is solved.
+   - If solved, a spell is cast on the player to initiate the next phase.
+   - If not solved, mechanics or penalties can be applied.
+   - Additional puzzle phase mechanics can be added.
+5. If the current phase is 9 and a sound has not been played yet, a sound is played.
+6. The current phase is announced with a yell and sound effect if it hasn't been announced before.
+7. If it's the final phase, a special yell is sent and a smoke effect is spawned and despawned after 5 seconds.
+   - The terrain's weather is modified.
+   - The boss's model is transformed to the final form using the desired display ID.
+8. The boss casts the spell associated with the current phase on its target.

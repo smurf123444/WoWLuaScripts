@@ -1,4 +1,4 @@
-local RichardHeart = {}
+--[[ local RichardHeart = {}
 local announcedPhase = 0
  -- Tracks the current phase
  -- Tracks the last announced phase
@@ -76,7 +76,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     if currentPhase == 2 then
         local players = creature:GetPlayersInRange(30)
 
---[[         if not hasSummonWormExecuted then
+      if not hasSummonWormExecuted then
             hasSummonWormExecuted = true
         
             local addsCount = math.random(3, 5)
@@ -85,12 +85,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local add = creature:SpawnCreature(33966, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0)
                 add:AttackStart(randomPlayer)
             end
-        end ]]
+        end 
 
         local function Timed(eventid, delay, repeats, worldobject)
             print("Ran TIMED 1")
             local range = 100 -- maximum range to search for players
-            local targets = worldobject:GetCreaturesInRange(range, 200002)
+            local targets = worldobject:GetCreaturesInRange(range, 200008)
             local closestNPC = nil
             local closestDistance = range + 1 -- start with a value greater than the maximum range
 
@@ -113,7 +113,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         local function Timed2(eventid, delay, repeats, worldobject)
             print("Ran TIMED 2")
             local range = 100 -- maximum range to search for players
-            local targets = worldobject:GetCreaturesInRange(range, 200002)
+            local targets = worldobject:GetCreaturesInRange(range, 200008)
             local closestNPC = nil
             local closestNPCDistance = range + 1 -- start with a value greater than the maximum range
             for _, player in ipairs(targets) do
@@ -167,7 +167,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         local function Timed1(eventid, delay, repeats, worldobject)
             print("Ran TIMED 11")
             local range = 100 -- maximum range to search for players
-            local targets = worldobject:GetCreaturesInRange(range, 200002)
+            local targets = worldobject:GetCreaturesInRange(range, 200008)
             local closestNPC = nil
             local closestDistance = range + 1 -- start with a value greater than the maximum range
             for _, player in ipairs(targets) do
@@ -190,7 +190,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         local function Timed22(eventid, delay, repeats, worldobject)
             print("Ran TIMED 22")
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200002)
+            local targets = worldobject:GetCreaturesInRange(range, 200008)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -251,7 +251,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         local function Timed33(eventid, delay, repeats, worldobject)
             --print("Ran TIMED 33")
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200002)
+            local targets = worldobject:GetCreaturesInRange(range, 200008)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
     
@@ -293,8 +293,9 @@ function RichardHeart.CheckHealth(event, creature, world)
     -- Cast the spell associated with the current phase on the boss's target
 end
 
-RegisterCreatureEvent(200002, 1, RichardHeart.OnEnterCombat)
-RegisterCreatureEvent(200002, 2, RichardHeart.OnLeaveCombat)
-RegisterCreatureEvent(200002, 4, RichardHeart.OnDied)
-RegisterCreatureEvent(200002, 5, RichardHeart.OnSpawn)
-RegisterCreatureEvent(200002, 9, RichardHeart.CheckHealth)
+RegisterCreatureEvent(200008, 1, RichardHeart.OnEnterCombat)
+RegisterCreatureEvent(200008, 2, RichardHeart.OnLeaveCombat)
+RegisterCreatureEvent(200008, 4, RichardHeart.OnDied)
+RegisterCreatureEvent(200008, 5, RichardHeart.OnSpawn)
+RegisterCreatureEvent(200008, 9, RichardHeart.CheckHealth)
+ ]]

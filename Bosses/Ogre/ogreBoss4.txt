@@ -1,0 +1,21 @@
+Jungle Boss #2:
+
+1. The code checks the boss's health and determines the current phase based on the health percentage.
+2. If the current phase is 3 (Adds Spawn Phase):
+   - A group of adds is spawned and aggroed on random players.
+   - Each add has its own set of abilities and mechanics.
+   - Players must focus on defeating the adds while managing boss mechanics.
+3. If the current phase is 5 (Vines Entanglement Phase):
+   - Vines spawn around the boss's location, creating a hazard area.
+   - Players caught within the vines suffer damage over time and reduced movement speed.
+   - Players need to break free from the vines by dealing damage to them or using specific abilities.
+4. If the current phase is 7 (Summon Miniboss Phase):
+   - A powerful miniboss is summoned to aid the jungle boss.
+   - The miniboss has its own set of abilities and mechanics, providing an additional challenge.
+   - Players must defeat both the jungle boss and the miniboss simultaneously.
+5. If the current phase is 9 (Rage Phase):
+   - The boss enters a state of rage, increasing its damage and attack speed.
+   - Players need to use defensive cooldowns and healing abilities to survive the increased damage.
+6. The current phase is announced with a yell and sound effect if it hasn't been announced before.
+7. The boss casts the spell associated with the current phase on its target.
+

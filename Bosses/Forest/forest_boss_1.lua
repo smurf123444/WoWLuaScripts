@@ -57,10 +57,11 @@ function RichardHeart.OnDied(event, creature, killer)
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
     creature:RemoveEvents()
+    currentPhase = 1
 end
 local burstRan = false
 function RichardHeart.CheckHealth(event, creature, world)
-    local SPELLS = {41924, 64771, 64704, 63147, 51052} -- List of spell IDs
+    local SPELLS = {41924, 64771, 69558, 63147, 51052} -- List of spell IDs
 
     if currentPhase == 1 then
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
@@ -69,18 +70,60 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
 
     if currentPhase == 2 then
-        local function Timed(eventid, delay, repeats, creature)
-            creature:MoveTo(1, 2193, 2309, 30)
-            creature:CastSpellAoF(creature:GetX(), creature:GetY(), creature:GetZ(), 17086, true)
+        local function Timed(eventid, delay, repeats, worldobject)
+            print("Ran TIMED 1")
+            local range = 100 -- maximum range to search for players
+            local targets = worldobject:GetCreaturesInRange(range, 200007)
+            local closestNPC = nil
+            local closestDistance = range + 1 -- start with a value greater than the maximum range
+
+            
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestNPC = player
+                    closestDistance = distance
+                end
+            end
+
+            print(worldobject:GetName())
+            print(closestNPC)
+            closestNPC:SendUnitYell("Seeya Bitch...",0 )
+            closestNPC:MoveTo(1, 2193, 2309, closestNPC:GetZ())
+          --  closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 17086, true)
         end
 
-        local function Timed2(eventid, delay, repeats, creature)
+        local function Timed2(eventid, delay, repeats, worldobject)
+            print("Ran TIMED 2")
+            local range = 100 -- maximum range to search for players
+            local targets = worldobject:GetCreaturesInRange(range, 200007)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 -- start with a value greater than the maximum range
 
-            if creature ~= nil and creature:GetTarget() ~= nil then
-                creature:AttackStart(creature:GetTarget())
-                creature:MoveChase(creature:GetTarget())
-                creature:CanAggro()
-                creature:MoveClear(true)
+            
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100 -- maximum range to search for players
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
+
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+            if closestPlayer ~= nil then
+                closestNPC:AttackStart(closestPlayer)
+                closestNPC:CanAggro()
+                closestNPC:MoveClear(true)
             end
         end
 
@@ -98,62 +141,85 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
 
-        local range = 40 -- maximum range to search for players
-        local targets = creature:GetPlayersInRange(range)
-        local randomPlayer = nil
 
-        if #targets > 0 then
-            local randomIndex = math.random(1, #targets) -- Generate a random index within the range of the targets
-            randomPlayer = targets[randomIndex] -- Select the player at the random index
-        end
 
-        do
-            creature:AttackStart(randomPlayer)
-            creature:MoveChase(randomPlayer)
-            creature:CanAggro()
-        end
 
         print("CURRENT PHASE 2")
     end
 
     if currentPhase == 3 then
-        local range = 40 -- maximum range to search for players
-        local targets = creature:GetPlayersInRange(range)
-        local randomPlayer = nil
 
-        if #targets > 0 then
-            local randomIndex = math.random(1, #targets) -- Generate a random index within the range of the targets
-            randomPlayer = targets[randomIndex] -- Select the player at the random index
-        end
 
-        do
-            creature:AttackStart(randomPlayer)
-            creature:MoveChase(randomPlayer)
-            creature:CanAggro()
-        end
+     
+        -- Peace out that bitch asap nigga.
+        local function Timed1(eventid, delay, repeats, worldobject)
+            print("Ran TIMED 11")
+            local range = 100 -- maximum range to search for players
+            local targets = worldobject:GetCreaturesInRange(range, 200007)
+            local closestNPC = nil
+            local closestDistance = range + 1 -- start with a value greater than the maximum range
 
-        creature:CastSpellAoF(creature:GetX(), creature:GetY(), creature:GetZ(), 62400, true)
-
-        function Lava(eventid, delay, repeats, creature)
-            if creature == nil then
-                return
-            end
-
-            local vinesCount = math.random(4, 6)
-
-            for i = 1, vinesCount do
-                local vineX = creature:GetX() + math.random(-5, 5)
-                local vineY = creature:GetY() + math.random(-5, 5)
-                local vineZ = creature:GetZ()
-                local vine = creature:SummonGameObject(6292, vineX, vineY, vineZ, creature:GetO(), 0, 0, 0, 0) -- Replace 6292 with the desired game object ID for the vine
-
-                if vine ~= nil then
-                    vine:SetPhaseMask(1) -- Set the phase mask for the vines
+            
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestNPC = player
+                    closestDistance = distance
                 end
             end
+
+            print(worldobject:GetName())
+            print(closestNPC)
+            closestNPC:SendUnitYell("Run!!",0 )
+            closestNPC:MoveTo(1, 2355, 2206, closestNPC:GetZ())
+          -- closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 17086, true)
+              -- Activate boss's blazing fury
         end
 
-        world:RegisterEvent(Lava, 3000, 2)
+        -- Open a can of Whoop ass
+        local function Timed22(eventid, delay, repeats, worldobject)
+            print("Ran TIMED 22")
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200007)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+
+        
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
+
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+   
+                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 72272, true)
+                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 69760, true)
+                closestNPC:AttackStart(closestPlayer)
+                closestNPC:CanAggro()
+                closestNPC:MoveClear(true)
+            --    closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
+
+        end
+        if burstRan == false then
+
+            world:RegisterEvent(Timed1, {1000, 10000}, 1)
+                    -- Timed Event 2
+             world:RegisterEvent(Timed22, {1000, 10000}, 1)
+            burstRan = true
+        end
 
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
@@ -163,13 +229,69 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
 
     if currentPhase == 4 then
+        local range = 40 -- maximum range to search for players
+        local targets = creature:GetPlayersInRange(range)
+        local randomPlayer = nil
+
+        if #targets > 0 then
+            local randomIndex = math.random(1, #targets) -- Generate a random index within the range of the targets
+            randomPlayer = targets[randomIndex] -- Select the player at the random index
+        end
+
+        do
+            creature:AttackStart(randomPlayer)
+            creature:MoveChase(randomPlayer)
+            creature:CanAggro()
+        end
+     --   creature:CastSpell(creature:GetVictim(),69558, creature)
+
+
+        local function Timed33(eventid, delay, repeats, worldobject)
+            print("Ran TIMED 33")
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200007)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+
+        
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
+
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+   
+              --  closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 72272, true)
+             --   closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 69760, true)
+
+             closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
+
+        end
+        world:RegisterEvent(Timed33, {9500, 10000}, 10)
+
+
+        print("CURRENT PHASE 4")
+
         -- Blazing Fury Phase
-       -- creature:CastSpell(creature:GetVictim(),SPELLS[currentPhase], creature) -- Activate boss's blazing fury
+ -- Activate boss's blazing fury
         -- Adjust boss's attacks to deal additional fire damage
     end
 
     -- Cast the spell associated with the current phase on the boss's target
-    creature:CastSpell(creature:GetVictim(), SPELLS[currentPhase], true)
+
 end
 
 
