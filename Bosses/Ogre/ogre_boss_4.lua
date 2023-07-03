@@ -8,12 +8,10 @@ function RichardHeart.OnSpawn(event, creature)
     creature:CastSpell(creature, 41924, true)
 end
 
-
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
 end
-
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
@@ -185,8 +183,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         print("CURRENT PHASE 4")
     end
 end
-
-    
 
 RegisterCreatureEvent(200015, 1, RichardHeart.OnEnterCombat)
 RegisterCreatureEvent(200015, 2, RichardHeart.OnLeaveCombat)

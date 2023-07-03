@@ -16,7 +16,6 @@ function RichardHeart.OnEnterCombat(event, creature, target)
    -- creature:RegisterEvent(RichardHeart.SpawnHounds, 8000, 1)
 end
 
-
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)

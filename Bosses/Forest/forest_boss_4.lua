@@ -13,7 +13,6 @@ function RichardHeart.OnEnterCombat(event, creature, target)
     creature:PlayDirectSound(17242) 
 end
 
-
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)

@@ -132,7 +132,6 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:AttackStart(closestPlayer)
                 closestNPC:CanAggro()
                 closestNPC:MoveClear(true)
-            --    closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
         end
         if burstRan == false then
              world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
@@ -191,9 +190,8 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
         print("CURRENT PHASE 4")
-    end 
+    end
 end
-
 
 RegisterCreatureEvent(200002, 1, RichardHeart.OnEnterCombat)
 RegisterCreatureEvent(200002, 2, RichardHeart.OnLeaveCombat)

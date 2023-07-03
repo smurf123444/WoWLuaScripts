@@ -1,22 +1,17 @@
 local RichardHeart = {}
-local announcedPhase = 0
- -- Tracks the current phase
- -- Tracks the last announced phase
+
 local currentPhase = 1
-local soundPlayed = false
+
 function RichardHeart.OnSpawn(event, creature)
     creature:SendUnitYell("Welcome, to pulsechain WoW!", 0)
     creature:SetWanderRadius(10)
     creature:CastSpell(creature, 41924, true)
 end
 
-
-
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
 end
-
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
@@ -34,7 +29,9 @@ function RichardHeart.OnDied(event, creature, killer)
     creature:RemoveEvents()
     currentPhase = 1
 end
+
 local burstRan = false
+
 function RichardHeart.CheckHealth(event, creature, world)
 
     if currentPhase == 1 then
@@ -211,8 +208,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
     end
 end
-
-
 
 RegisterCreatureEvent(200007, 1, RichardHeart.OnEnterCombat)
 RegisterCreatureEvent(200007, 2, RichardHeart.OnLeaveCombat)

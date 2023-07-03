@@ -33,12 +33,10 @@ function RichardHeart.SpawnHounds(event, delay, pCall, creature)
     creature:RegisterEvent(RichardHeart.SpawnHounds, 45000, 1)
 end
 
-
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242) 
 end
-
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."

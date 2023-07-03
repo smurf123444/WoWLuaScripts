@@ -1,9 +1,7 @@
 local RichardHeart = {}
-local announcedPhase = 0
- -- Tracks the current phase
- -- Tracks the last announced phase
+
 local currentPhase = 1
-local soundPlayed = false
+
 function RichardHeart.OnSpawn(event, creature)
     creature:SendUnitYell("Welcome, to pulsechain WoW!", 0)
     creature:SetWanderRadius(10)
@@ -12,10 +10,8 @@ end
 
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
-    creature:PlayDirectSound(17242) -- Add this line to play a sound
-   -- creature:RegisterEvent(RichardHeart.SpawnHounds, 8000, 1)
+    creature:PlayDirectSound(17242)
 end
-
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
@@ -26,17 +22,16 @@ end
 
 function RichardHeart.OnDied(event, creature, killer)
     creature:SendUnitYell("Agh! Ugh.....OOhha..", 0)
-    creature:PlayDirectSound(17374) -- Replace 1234 with the ID of the sound you want to play
+    creature:PlayDirectSound(17374) 
     if(killer:GetObjectType() == "Player") then
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
     creature:RemoveEvents()
     currentPhase = 1
 end
+
 local burstRan = false
-local hasSummonWormExecuted = false
-local hasSummonMiniBossExecuted = false
-local hasBerkerkExecuted = false
+
 function RichardHeart.CheckHealth(event, creature, world)
     --(Transform & Movement Phase):
     if currentPhase == 1 then
@@ -57,7 +52,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             print(closestNPC)
             closestNPC:SendUnitYell("Seeya Bitch...",0 )
             closestNPC:MoveTo(1, 2193, 2309, closestNPC:GetZ())
-          --  closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 17086, true)
         end
         if burstRan == false then
             world:RegisterEvent(Move, {1000, 3000}, 1)
@@ -185,14 +179,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:AttackStart(closestPlayer)
                 closestNPC:CanAggro()
                 closestNPC:MoveClear(true)
-            --    closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
         end
         if burstRan == false then
             world:RegisterEvent(MoveAgain, {1000, 5000}, 1)
              world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
             burstRan = true
         end
-
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
             burstRan = false
@@ -201,7 +193,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         print("CURRENT PHASE 3")
     end
 end
-
 
 RegisterCreatureEvent(200001, 1, RichardHeart.OnEnterCombat)
 RegisterCreatureEvent(200001, 2, RichardHeart.OnLeaveCombat)

@@ -33,8 +33,6 @@ function RichardHeart.OnDied(event, creature, killer)
 end
 local burstRan = false
 local hasSummonWormExecuted = false
-local hasSummonMiniBossExecuted = false
-local hasBerkerkExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
     if currentPhase == 1 then
         local players = creature:GetPlayersInRange(30)
