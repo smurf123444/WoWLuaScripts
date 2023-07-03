@@ -1,45 +1,17 @@
 local RichardHeart = {}
-local announcedPhase = 0
- -- Tracks the current phase
- -- Tracks the last announced phase
+
 local currentPhase = 1
-local soundPlayed = false
+
 function RichardHeart.OnSpawn(event, creature)
     creature:SendUnitYell("Welcome, to pulsechain WoW!", 0)
     creature:SetWanderRadius(10)
     creature:CastSpell(creature, 41924, true)
 end
 
-function RichardHeart.SummonHounds(creature, target)
-    local x, y, z = creature:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
-    local hound = creature:SpawnCreature(37098, x, y, z + 5, 0, 2, 300000)
-    hound:AttackStart(target)
-end
-
-function RichardHeart.SpawnHounds(event, delay, pCall, creature)
-    local range = 40 -- maximum range to search for players
-    local targets = creature:GetPlayersInRange(range)
-    local closestPlayer = nil
-    local closestDistance = range + 1 -- start with a value greater than the maximum range
-    for _, player in ipairs(targets) do
-        local distance = creature:GetDistance(player)
-        if (distance < closestDistance) then
-            closestPlayer = player
-            closestDistance = distance
-        end
-    end
-  --  creature:AttackStart(closestPlayer) -- attack the closest player
-    print("Closest player:", closestPlayer)
-    RichardHeart.SummonHounds(creature, closestPlayer)
-
-    creature:RegisterEvent(RichardHeart.SpawnHounds, 45000, 1)
-end
-
 
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
-    creature:PlayDirectSound(17242) -- Add this line to play a sound
-   -- creature:RegisterEvent(RichardHeart.SpawnHounds, 8000, 1)
+    creature:PlayDirectSound(17242) 
 end
 
 
@@ -52,113 +24,190 @@ end
 
 function RichardHeart.OnDied(event, creature, killer)
     creature:SendUnitYell("Agh! Ugh.....OOhha..", 0)
-    creature:PlayDirectSound(17374) -- Replace 1234 with the ID of the sound you want to play
+    creature:PlayDirectSound(17374) 
     if(killer:GetObjectType() == "Player") then
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
     creature:RemoveEvents()
+    currentPhase = 1
 end
+local burstRan = false
 local hasSummonWormExecuted = false
 local hasSummonMiniBossExecuted = false
 local hasBerkerkExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-    local SPELLS = {41924, 64771, 64704, 63147, 51052, 63830, 63830, 64189, 64163, 50980} -- List of spell IDs
-    local PHASES = {"", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"} -- List of phase names
-
-    for i = #PHASES, 2, -1 do
-        if creature:HealthBelowPct((#PHASES - i + 1) * 10) then
-            world:PlayDirectSound(17257)
-            currentPhase = i
-            break
-        end
-    end
-
-    if currentPhase == 3 then
-        -- Adds Spawn Phase
-        -- Spawn adds and aggro them on random players
-
-        -- Example: Spawn adds and set their target to random players
+    if currentPhase == 1 then
         local players = creature:GetPlayersInRange(30)
-
-
         if not hasSummonWormExecuted then
             hasSummonWormExecuted = true
-        
-            local addsCount = math.random(3, 5)
+            local addsCount = math.random(2, 3)
             for i = 1, addsCount do
                 local randomPlayer = players[math.random(1, #players)]
                 local add = creature:SpawnCreature(33966, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0)
                 add:AttackStart(randomPlayer)
             end
         end
-        
-
-        -- Additional mechanics for the Adds Spawn Phase can be added here
-    end
-
-    if currentPhase == 5 then
-        -- Vines Entanglement Phase
-        -- Spawn vines that create a hazard area
-
-        -- Example: Spawn vines around the boss's location
-        local vinesCount = math.random(4, 6)
-        for i = 1, vinesCount do
-            local vineX = creature:GetX() + math.random(-5, 5)
-            local vineY = creature:GetY() + math.random(-5, 5)
-            local vineZ = creature:GetZ()
-            local vine = creature:SummonGameObject(6292, vineX, vineY, vineZ, creature:GetO(), 0, 0, 0, 0) -- Replace 54321 with the desired game object ID for the vine
-            vine:SetPhaseMask(1) -- Set the phase mask for the vines
+        if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
+            world:RemoveEvents()
+            currentPhase = 2
         end
-
-        -- Additional mechanics for the Vines Entanglement Phase can be added here
+end
+    if currentPhase == 2 then
+        --BERSERK PHASE
+        local function Attack(eventid, delay, repeats, worldobject)
+            print("Ran Attack")
+            local range = 100
+            local targets = worldobject:GetCreaturesInRange(range, 200003)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+                closestNPC:AttackStart(closestPlayer)
+                closestNPC:CanAggro()
+                closestNPC:MoveClear(true)
+        end
+        if burstRan == false then
+            burstRan = true
+            world:RegisterEvent(Attack,  {6000, 9000}, 1)
+        end
+        if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
+            world:RemoveEvents()
+            currentPhase = 3
+            burstRan = false
+        end
+        print("CURRENT PHASE 2")
     end
-
-    if currentPhase == 7 then
-
-        local players = creature:GetPlayersInRange(30)
-        -- Berkserker phase
-        if not hasSummonMiniBossExecuted then
-            hasSummonMiniBossExecuted = true
-        
-            local addsCount = math.random(1, 2)
-            for i = 1, addsCount do
-                local randomPlayer = players[math.random(1, #players)]
-                local miniboss = creature:SpawnCreature(40435, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0) -- Replace 67890 with the desired miniboss creature entry ID
-                miniboss:AttackStart(randomPlayer)
-        
+    --ROOTS TRAP PHASE
+    if currentPhase == 3 then
+        local function MoveAgain(eventid, delay, repeats, worldobject)
+            print("Ran MoveAgain ")
+            local range = 100
+            local targets = worldobject:GetCreaturesInRange(range, 200003)
+            local closestNPC = nil
+            local closestDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestNPC = player
+                    closestDistance = distance
+                end
+            end
+            local vinesCount = math.random(90, 100)
+            for i = 1, vinesCount do
+                local vineX = closestNPC:GetX() + math.random(-10, 10)
+                local vineY = closestNPC:GetY() + math.random(-10, 10)
+                local vineZ = closestNPC:GetZ()
+                local vine = closestNPC:SummonGameObject(175124, vineX, vineY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
+                vine:SetPhaseMask(1)
             end
         end
-        -- Additional mechanics for the Summon Miniboss Phase can be added here
-    end
+        -- Open a can of Whoop ass
+        local function AttackAgain(eventid, delay, repeats, worldobject)
+            print("Ran AttackAgain")
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200003)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
 
-    if currentPhase == 9 then
-
-        -- Rage Phase
-        if not hasBerkerkExecuted then
-            hasBerkerkExecuted = true
-        
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 72272, true)
+                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 69760, true)
+                closestNPC:AttackStart(closestPlayer)
+                closestNPC:CanAggro()
+                closestNPC:MoveClear(true)
+            --    closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
         end
-        -- Additional mechanics for the Rage Phase can be added here
+        if burstRan == false then
+            world:RegisterEvent(MoveAgain, {1000, 5000}, 1)
+             world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
+            burstRan = true
+        end
+        if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
+            world:RemoveEvents()
+            currentPhase = 4
+            burstRan = false
+        end
+        print("CURRENT PHASE 3")
     end
+    if currentPhase == 4 then
+        local range = 40 
+        local targets = creature:GetPlayersInRange(range)
+        local randomPlayer = nil
+        if #targets > 0 then
+            local randomIndex = math.random(1, #targets)
+            randomPlayer = targets[randomIndex]
+        end
+        creature:AttackStart(randomPlayer)
+        creature:MoveChase(randomPlayer)
+        creature:CanAggro()
+        local function CastSpells(eventid, delay, repeats, worldobject)
+            print("Ran CastSpells")
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200003)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 40
+            local targets = worldobject:GetPlayersInRange(range)
+            local randomPlayer = nil
+            if #targets > 0 then
+                local randomIndex = math.random(1, #targets)
+                randomPlayer = targets[randomIndex] 
+            end
+            closestNPC:CastSpell(randomPlayer, 69558, true)
 
-    if currentPhase > 1 and currentPhase < #PHASES and currentPhase ~= announcedPhase then
-        -- Announce the current phase if it hasn't been announced yet
-        --creature:SendUnitYell(PHASES[currentPhase] .. " begins!", 0)
-        world:PlayDirectSound(17258)
-        announcedPhase = currentPhase
-    elseif currentPhase == #PHASES and announcedPhase ~= #PHASES then
-        hasSummonWormExecuted = false
-        hasSummonMiniBossExecuted = false
-        hasBerkerkExecuted = false
-        -- Special message for the final phase
-        creature:SendUnitYell(PHASES[currentPhase] .. "! It's over 9000!!!", 0)
-        announcedPhase = #PHASES
+        end
+        if burstRan == false and currentPhase == 4 then
+            world:RegisterEvent(CastSpells, 10000, 10)
+            burstRan = true
+        end
+        if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
+            currentPhase = 5
+            world:RemoveEvents()
+            burstRan = false
+        end
+        print("CURRENT PHASE 4")
     end
-
-    -- Cast the spell associated with the current phase
-    creature:CastSpell(creature:GetVictim(), SPELLS[currentPhase], true)
 end
-
 
 RegisterCreatureEvent(200003, 1, RichardHeart.OnEnterCombat)
 RegisterCreatureEvent(200003, 2, RichardHeart.OnLeaveCombat)

@@ -10,32 +10,6 @@ function RichardHeart.OnSpawn(event, creature)
     creature:CastSpell(creature, 41924, true)
 end
 
-function RichardHeart.SummonHounds(creature, target)
-    local x, y, z = creature:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
-    local hound = creature:SpawnCreature(37098, x, y, z + 5, 0, 2, 300000)
-    hound:AttackStart(target)
-end
-
-function RichardHeart.SpawnHounds(event, delay, pCall, creature)
-    local range = 40 -- maximum range to search for players
-    local targets = creature:GetPlayersInRange(range)
-    local closestPlayer = nil
-    local closestDistance = range + 1 -- start with a value greater than the maximum range
-    for _, player in ipairs(targets) do
-        local distance = creature:GetDistance(player)
-        if (distance < closestDistance) then
-            closestPlayer = player
-            closestDistance = distance
-        end
-    end
-  --  creature:AttackStart(closestPlayer) -- attack the closest player
-    print("Closest player:", closestPlayer)
-    RichardHeart.SummonHounds(creature, closestPlayer)
-
-    creature:RegisterEvent(RichardHeart.SpawnHounds, 45000, 1)
-end
-
-
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242) -- Add this line to play a sound
@@ -57,115 +31,176 @@ function RichardHeart.OnDied(event, creature, killer)
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
     creature:RemoveEvents()
+    currentPhase = 1
 end
-local hazardGuid = nil
+local burstRan = false
+local hasSummonWormExecuted = false
+local hasSummonMiniBossExecuted = false
+local hasBerkerkExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-   -- local SPELLS = {0, 0, 47541, 71844, 51052, 73912, 0, 72762, 0, 50980} -- List of spell IDs
-    local SPELLS = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} -- List of spell IDs
-    local PHASES = {"", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"} -- List of phase names
- 
-    for i=#PHASES, 2, -1 do
-     
-        if creature:HealthBelowPct((#PHASES - i + 1) * 10) then
-            world:PlayDirectSound(17257)
-            currentPhase = i
-            break
+    --(Transform & Movement Phase):
+    if currentPhase == 1 then
+        local function Move(eventid, delay, repeats, worldobject)
+            print("Ran Move")
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200001)
+            local closestNPC = nil
+            local closestDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestNPC = player
+                    closestDistance = distance
+                end
+            end
+            print(worldobject:GetName())
+            print(closestNPC)
+            closestNPC:SendUnitYell("Seeya Bitch...",0 )
+            closestNPC:MoveTo(1, 2193, 2309, closestNPC:GetZ())
+          --  closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 17086, true)
+        end
+        if burstRan == false then
+            world:RegisterEvent(Move, {1000, 3000}, 1)
+            burstRan = true
+        end
+        if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
+            world:RemoveEvents()
+            currentPhase = 2
         end
     end
-
-    if currentPhase == 4 then
-        local player = creature:GetVictim()
-        creature:MoveTo(1, -9118, 395, 92)
-        --wait 2 sec 
-
-        --perform emote
-       
-       -- player:MoveFollow(creature, 5)
-        -- Add a puff of smoke effect
-        local smokeEffect = creature:SpawnCreature(29939, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0)
-        smokeEffect:CastSpell(smokeEffect, 6524, true) -- 6524 is the ID of the smoke effect spell
-        smokeEffect:DespawnOrUnsummon(5000) -- Make the smoke effect despawn after 5 seconds
-
-        -- Transform the boss model
-        creature:SetDisplayId(18792) -- Replace 18792 with the display ID of the desired transformed model
-
-        -- Add new abilities or mechanics for the Transformation Phase
-        -- Example: creature:CastSpell(player, SPELLS[currentPhase], true)
+    --(Hazard Phase):
+    if currentPhase == 2 then
+        local function Attack(eventid, delay, repeats, worldobject)
+            print("Ran Attack")
+            local range = 100
+            local targets = worldobject:GetCreaturesInRange(range, 200011)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100 
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+            local vinesCount = math.random(90, 100)
+            for i = 1, vinesCount do
+                local vineX = closestNPC:GetX() + math.random(-10, 10)
+                local vineY = closestNPC:GetY() + math.random(-10, 10)
+                local vineZ = closestNPC:GetZ()
+                local vine = closestNPC:SummonGameObject(175124, vineX, vineY, vineZ, closestNPC:GetO(), 0, 0, 0, 0) 
+                vine:SetPhaseMask(1)
+            end
+            local range = 40 
+            local targets = closestNPC:GetPlayersInRange(range)
+            local randomPlayer = nil
+            if #targets > 0 then
+                local randomIndex = math.random(1, #targets)
+                randomPlayer = targets[randomIndex] 
+            end
+            closestNPC:AttackStart(randomPlayer)
+            closestNPC:MoveChase(randomPlayer)
+            closestNPC:CanAggro()
+            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 57095, true)
+            closestNPC:CastSpell(randomPlayer, 57095, true)
+            closestNPC:AttackStart(closestPlayer)
+            closestNPC:CanAggro()
+            closestNPC:MoveClear(true)
+        end
+        if burstRan == false then
+            world:RegisterEvent(Move, {1000, 3000}, 1)
+            burstRan = true
+            world:RegisterEvent(Attack,  {6000, 9000}, 1)
+        end
+        if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
+            currentPhase = 3
+            world:RemoveEvents()
+            burstRan = false
+        end
+        print("CURRENT PHASE 2")
     end
+    --PUZZLE PHASE
+    if currentPhase == 3 then
+        local function MoveAgain(eventid, delay, repeats, worldobject)
+            print("Ran MoveAgain ")
+            local range = 100
+            local targets = worldobject:GetCreaturesInRange(range, 200001)
+            local closestNPC = nil
+            local closestDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestNPC = player
+                    closestDistance = distance
+                end
+            end
+            local vinesCount = math.random(90, 100)
+            for i = 1, vinesCount do
+                local vineX = closestNPC:GetX() + math.random(-10, 10)
+                local vineY = closestNPC:GetY() + math.random(-10, 10)
+                local vineZ = closestNPC:GetZ()
+                local vine = closestNPC:SummonGameObject(175124, vineX, vineY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
+                vine:SetPhaseMask(1)
+            end
+        end
+        -- Open a can of Whoop ass
+        local function AttackAgain(eventid, delay, repeats, worldobject)
+            print("Ran AttackAgain")
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200001)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            local range = 100
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
 
-    if currentPhase == 6 then
-        -- Environmental Phase
-        -- Create hazards or change the terrain of the battlefield
-        
-        -- Example: Summon an environmental hazard
-       -- local hazard = creature:SummonGameObject(194635, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 0, 0, 0, 0) -- Replace 12345 with the desired game object ID
-      --  hazard:SetGoState(1)-- Activate the hazard
-      
-     --   hazard:SetPhaseMask(1)
-        local map = world:GetMap()
-    
-        -- Example: Modify the terrain
-          map:SetWeather(12, 90, 1) -- Replace the coordinates with the desired values to modify the terrain
-    --    hazard:UseDoorOrButton( 10000 )-- Activate the hazard
-        -- Additional environmental phase mechanics can be added here
-    end
-
-
-    if currentPhase == 8 then
-        -- Puzzle Phase
-        -- Set up the puzzle and conditions to solve it
-    
-        local puzzleSolved = false
-       -- local hazard = creature:SummonGameObject(194635, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 0, 0, 0, 0)-- Activate the hazard
-        -- Example: Check if the puzzle is solved
-        local nearestGameObject = creature:GetNearestGameObject( 10, 138493 )
-        print(nearestGameObject)
-        --nearestGameObject:RemoveFromWorld(true)-- Activate the hazard
-          nearestGameObject:SetGoState(0)-- Activate the hazard
-        --  nearestGameObject:SetPhaseMask(0)
-        if puzzleSolved then
-            -- Proceed to the next phase or perform a transition
-            creature:CastSpell(creature:GetVictim(), SPELLS[currentPhase], true) -- Cast a spell on the player to initiate the next phase
-        else
-            -- Puzzle is not solved, apply mechanics or penalties
-            -- Example: Restrict player movement or abilities
-
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
+                end
+            end
+                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 72272, true)
+                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 69760, true)
+                closestNPC:AttackStart(closestPlayer)
+                closestNPC:CanAggro()
+                closestNPC:MoveClear(true)
+            --    closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
+        end
+        if burstRan == false then
+            world:RegisterEvent(MoveAgain, {1000, 5000}, 1)
+             world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
+            burstRan = true
         end
 
-        -- Additional puzzle phase mechanics can be added here
+        if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
+            currentPhase = 4
+            burstRan = false
+            world:RemoveEvents()
+        end
+        print("CURRENT PHASE 3")
     end
-
-
-    if currentPhase == 9 and not soundPlayed then
-        world:PlayDirectSound(17247)
-        soundPlayed = true
-        creature:MoveTo(1, -9111, 402, 92)
-    end
-
-    -- Announce the current phase if it hasn't been announced yet
-    if currentPhase > 1 and currentPhase < #PHASES and currentPhase ~= announcedPhase then
-        creature:SendUnitYell(PHASES[currentPhase].." begins!", 0)
-        world:PlayDirectSound(17258)
-        announcedPhase = currentPhase
-    elseif currentPhase == #PHASES and announcedPhase ~= #PHASES then
-        creature:SendUnitYell(PHASES[currentPhase].."! It's over 9000!!!", 0) -- Special message for the final phase
-        announcedPhase = #PHASES
-        local map = world:GetMap()
-        -- Example: Modify the terrain
-        map:SetWeather(12, 0, 0) 
-        -- Add a puff of smoke effect
-        local smokeEffect = creature:SpawnCreature(29939, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0)
-        smokeEffect:CastSpell(smokeEffect, 6524, true) -- 6524 is the ID of the smoke effect spell
-        smokeEffect:DespawnOrUnsummon(5000) -- Make the smoke effect despawn after 5 seconds
-
-        -- Transform the boss model
-        creature:SetDisplayId(27061) -- Replace 30721 with the display ID of the desired final form model
-    end
-
-    -- Cast the spell associated with the current phase
-    creature:CastSpell(creature:GetVictim(), SPELLS[currentPhase], true)
 end
-
 
 
 RegisterCreatureEvent(200001, 1, RichardHeart.OnEnterCombat)
