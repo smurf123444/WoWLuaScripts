@@ -67,7 +67,7 @@ local hasSummonWormExecuted = false
                     for i = 1, addsCount do
                         local randomPlayer = players[math.random(1, #players)]
                         local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
-                        local add = closestNPC:SpawnCreature(35314, x, y, z, closestNPC:GetO(), 2, 0)
+                        local add = closestNPC:SpawnCreature(34057, x, y, z, closestNPC:GetO(), 2, 0)
                         add:AttackStart(randomPlayer)
                     end
                 end

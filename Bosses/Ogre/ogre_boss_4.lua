@@ -44,7 +44,7 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-
+--WarCry
     if currentPhase == 1 then
         local function PenetratingStrikes(eventid, delay, repeats, worldobject)
             local range = 100
@@ -70,9 +70,9 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-
+--BOULDER BARAGE
     if currentPhase == 2 then
-        local function Earthquake(eventid, delay, repeats, worldobject)
+        local function Boulders(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200015)
             local closestNPC = nil
@@ -112,15 +112,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            closestNPC:PerformEmote(27)
-            closestNPC:EmoteState(27)
             closestNPC:AttackStart(closestPlayer)
-            closestNPC:MoveChase(closestPlayer)
             closestNPC:CanAggro()
-            closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            world:RegisterEvent(Earthquake, 3000, 1)
+            world:RegisterEvent(Boulders, 3000, 1)
             world:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
@@ -131,7 +127,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-
+--IRON DEFENCE
     if currentPhase == 3 then
         function Minions(eventid, delay, repeats, worldobject)
             local range = 100 
@@ -148,17 +144,8 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
-            local players = closestNPC:GetPlayersInRange(30)
-            if not hasSummonWormExecuted then
-                hasSummonWormExecuted = true
-                local addsCount = math.random(1, 1)
-                for i = 1, addsCount do
-                    local randomPlayer = players[math.random(1, #players)]
-                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
-                    local add = closestNPC:SpawnCreature(35314, x, y, z, closestNPC:GetO(), 2, 0)
-                    add:AttackStart(randomPlayer)
-                end
-            end
+            closestNPC:CastSpell(closestNPC, 62269, true)
+            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 62269, true)
         end
         world:RegisterEvent(Minions, {3500, 4000}, 1)
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
@@ -168,7 +155,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-
+--LAST STAND
     if currentPhase == 4 then
         function EnragedRampage(eventid, delay, repeats, worldobject)
             local range = 100 
@@ -185,9 +172,9 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
-            closestNPC:CastSpell(closestNPC, 41924, true)
+            closestNPC:CastSpell(closestNPC, 61915, true)
         end
-        world:RegisterEvent(EnragedRampage, {1500, 3000}, 1)
+        world:RegisterEvent(EnragedRampage, {1500, 3000}, 3)
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 5
             burstRan = false

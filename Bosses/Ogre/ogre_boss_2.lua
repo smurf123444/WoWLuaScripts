@@ -42,7 +42,7 @@ local currentPhase = 1
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-
+    --Enraged Assualt
     if currentPhase == 1 then
         local function EnragedAssualt(eventid, delay, repeats, worldobject)
             local range = 100
@@ -83,7 +83,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-
+    -- Thunderous Roar
     if currentPhase == 2 then
         local function Stomp(eventid, delay, repeats, worldobject)
             local range = 100
@@ -146,7 +146,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-
+    -- Reinforcments Unleashed
     if currentPhase == 3 then
         function Minions(eventid, delay, repeats, worldobject)
             local range = 100 
@@ -183,7 +183,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-
+    -- Berserker Fury
     if currentPhase == 4 then
         function EnragedRampage(eventid, delay, repeats, worldobject)
             local range = 100 

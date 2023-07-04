@@ -49,7 +49,7 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-
+    -- The Ogre Awakens
     if currentPhase == 1 then
         local function Awaken(eventid, delay, repeats, worldobject)
             local range = 100
@@ -77,7 +77,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-
+    -- Brutal Assault
     if currentPhase == 2 then
         local function WhirlWind(eventid, delay, repeats, worldobject)
             local range = 100
@@ -138,7 +138,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-
+    -- Reinforcments Arrive
     if currentPhase == 3 then
         function Minions(eventid, delay, repeats, worldobject)
             local range = 100 
@@ -187,7 +187,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-
+    -- Enraged Rampage
     if currentPhase == 4 then
         function EnragedRampage(eventid, delay, repeats, worldobject)
             local range = 100 
@@ -226,7 +226,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 4")
     end
-
+    -- Last Stand
     if currentPhase == 5 then
         function LastStand(eventid, delay, repeats, worldobject)
             local range = 100 

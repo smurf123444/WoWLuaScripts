@@ -44,9 +44,9 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-
+    --Mind Control
     if currentPhase == 1 then
-        local function PenetratingStrikes(eventid, delay, repeats, worldobject)
+        local function MindControl(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200018)
             local closestNPC = nil
@@ -61,7 +61,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestNPC, 52890, true)
         end
     if burstRan == false then
-        world:RegisterEvent(PenetratingStrikes, 3000, 1)
+        world:RegisterEvent(MindControl, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
@@ -70,9 +70,9 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-
+    -- Shadowmeld
     if currentPhase == 2 then
-        local function Earthquake(eventid, delay, repeats, worldobject)
+        local function Shadowmeld(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200018)
             local closestNPC = nil
@@ -112,15 +112,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            closestNPC:PerformEmote(27)
-            closestNPC:EmoteState(27)
             closestNPC:AttackStart(closestPlayer)
-            closestNPC:MoveChase(closestPlayer)
             closestNPC:CanAggro()
-            closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            world:RegisterEvent(Earthquake, 3000, 1)
+            world:RegisterEvent(Shadowmeld, 3000, 1)
             world:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
@@ -131,9 +127,9 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-
+    --Mental Colapse
     if currentPhase == 3 then
-        function Minions(eventid, delay, repeats, worldobject)
+        function MentalCollapse(eventid, delay, repeats, worldobject)
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200018)
             local closestNPC = nil
@@ -160,7 +156,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
         end
-        world:RegisterEvent(Minions, {3500, 4000}, 1)
+
+        if burstRan == false then
+            world:RegisterEvent(MentalCollapse, {3500, 4000}, 1)
+            burstRan = true
+        end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             world:RemoveEvents()
             currentPhase = 4
@@ -168,9 +168,9 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-
+    --Desperation 
     if currentPhase == 4 then
-        function EnragedRampage(eventid, delay, repeats, worldobject)
+        function Desperation(eventid, delay, repeats, worldobject)
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200018)
             local closestNPC = nil
@@ -187,7 +187,10 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:CastSpell(closestNPC, 41924, true)
         end
-        world:RegisterEvent(EnragedRampage, {1500, 3000}, 1)
+        if burstRan == false then
+            world:RegisterEvent(Desperation, {1500, 3000}, 1)
+            burstRan = true
+        end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 5
             burstRan = false

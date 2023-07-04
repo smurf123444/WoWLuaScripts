@@ -44,9 +44,9 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-
+    --Shattering Strikes
     if currentPhase == 1 then
-        local function PenetratingStrikes(eventid, delay, repeats, worldobject)
+        local function ShatteringStrikes(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200014)
             local closestNPC = nil
@@ -61,7 +61,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestNPC, 52890, true)
         end
     if burstRan == false then
-        world:RegisterEvent(PenetratingStrikes, 3000, 1)
+        world:RegisterEvent(ShatteringStrikes, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
@@ -70,7 +70,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-
+    --Earthquake Fury
     if currentPhase == 2 then
         local function Earthquake(eventid, delay, repeats, worldobject)
             local range = 100
@@ -130,7 +130,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-
+    --Minion Onslaught
     if currentPhase == 3 then
         function Minions(eventid, delay, repeats, worldobject)
             local range = 100 
@@ -167,7 +167,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-
+    --Unbreakable Determination
     if currentPhase == 4 then
         function EnragedRampage(eventid, delay, repeats, worldobject)
             local range = 100 
