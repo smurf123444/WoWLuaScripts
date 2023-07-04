@@ -66,11 +66,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             if burstRan == false then
                 creature:SendUnitYell("Prepare for DOOM! (7 sec)",0)
-                world:RegisterEvent(Burst, 7000, 1)
+                creature:RegisterEvent(Burst, 7000, 1)
                 burstRan = true
             end
             if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-                world:RemoveEvents()
+                creature:RemoveEvents()
                 currentPhase = 2
             end
         end
@@ -108,7 +108,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPC:MoveClear(true)
                 end
             end
-            world:RegisterEvent(Tremor, 10000, 1)
+            creature:RegisterEvent(Tremor, 10000, 1)
             local range = 40
             local targets = creature:GetPlayersInRange(range)
             local randomPlayer = nil
@@ -122,7 +122,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 creature:CanAggro()
             end
             if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-                world:RemoveEvents()
+                creature:RemoveEvents()
                 currentPhase = 3
                 burstRan = false
             end
@@ -167,12 +167,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                     vine:SetPhaseMask(1)
                 end
             end
-            world:RegisterEvent(Lava, {9500, 10000}, 10)
+            creature:RegisterEvent(Lava, {9500, 10000}, 10)
             if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
                 
                 currentPhase = 4
                 burstRan = false
-                world:RemoveEvents()
+                creature:RemoveEvents()
             end
             print("CURRENT PHASE 3")
         end

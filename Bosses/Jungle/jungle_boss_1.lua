@@ -66,11 +66,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:MoveTo(1, 2193, 2309, closestNPC:GetZ())
         end
         if burstRan == false then
-            world:RegisterEvent(Move, {1000, 3000}, 1)
+            creature:RegisterEvent(Move, {1000, 3000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 2
         end
     end
@@ -126,13 +126,13 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            world:RegisterEvent(Move, {1000, 3000}, 1)
+            creature:RegisterEvent(Move, {1000, 3000}, 1)
             burstRan = true
-            world:RegisterEvent(Attack,  {6000, 9000}, 1)
+            creature:RegisterEvent(Attack,  {6000, 9000}, 1)
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
             currentPhase = 3
-            world:RemoveEvents()
+            creature:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 2")
@@ -194,14 +194,14 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            world:RegisterEvent(MoveAgain, {1000, 5000}, 1)
-             world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
+            creature:RegisterEvent(MoveAgain, {1000, 5000}, 1)
+             creature:RegisterEvent(AttackAgain, {6000, 10000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
             burstRan = false
-            world:RemoveEvents()
+            creature:RemoveEvents()
         end
         print("CURRENT PHASE 3")
     end

@@ -74,14 +74,14 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 52890, true)
+            closestNPC:CastSpell(closestNPC, 62437, true)
         end
     if burstRan == false then
-        world:RegisterEvent(TremorStomp, 3000, 1)
+        creature:RegisterEvent(TremorStomp, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 2
             burstRan = false
         end
@@ -101,8 +101,8 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 61882, true)
-            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
+            closestNPC:CastSpell(closestNPC, 58678, true)
+
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100
@@ -132,12 +132,12 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CanAggro()
         end
         if burstRan == false then
-            world:RegisterEvent(CrumblingTerrain, 3000, 1)
-            world:RegisterEvent(Attack, 30000, 1)
+            creature:RegisterEvent(CrumblingTerrain, 3000, 1)
+            creature:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -171,14 +171,15 @@ function RichardHeart.CheckHealth(event, creature, world)
                     add:AttackStart(randomPlayer)
                 end
             end
+            closestNPC:CastSpell(closestNPC, 46932, true)
         end
 
         if burstRan == false then
-            world:RegisterEvent(ShatteringImpact, {3500, 4000}, 1)
+            creature:RegisterEvent(ShatteringImpact, {3500, 4000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
@@ -201,16 +202,16 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
-            closestNPC:CastSpell(closestNPC, 41924, true)
+            closestNPC:CastSpell(closestNPC, 62444, true)
         end
         if burstRan == false then
-            world:RegisterEvent(UnleashedFury, {1500, 3000}, 1)
+            creature:RegisterEvent(UnleashedFury, 1, 0)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 5
             burstRan = false
-            world:RemoveEvents()
+            creature:RemoveEvents()
         end
         print("CURRENT PHASE 4")
     end

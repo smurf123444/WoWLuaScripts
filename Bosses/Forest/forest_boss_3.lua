@@ -74,7 +74,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if burstRan == false then
             burstRan = true
-            world:RegisterEvent(SpawnAdds, {1000, 3000}, 1)
+            creature:RegisterEvent(SpawnAdds, {1000, 3000}, 1)
         end
     end
 
@@ -133,14 +133,14 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            world:RegisterEvent(Move, {1000, 3000}, 1)
+            creature:RegisterEvent(Move, {1000, 3000}, 1)
             burstRan = true
-            world:RegisterEvent(SpawnGameObjects,  {6000, 9000}, 1)
+            creature:RegisterEvent(SpawnGameObjects,  {6000, 9000}, 1)
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
             currentPhase = 3
             burstRan = false
-            world:RemoveEvents()
+            creature:RemoveEvents()
         end
         print("CURRENT PHASE 2")
     end
@@ -208,13 +208,13 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            world:RegisterEvent(SpawnGameObjects2, {1000, 5000}, 1)
-             world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
+            creature:RegisterEvent(SpawnGameObjects2, {1000, 5000}, 1)
+             creature:RegisterEvent(AttackAgain, {6000, 10000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
-            world:RemoveEvents()
+            creature:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 3")
@@ -250,13 +250,13 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
         end
         if burstRan == false and currentPhase == 4 then
-            world:RegisterEvent(CastSpells, 10000, 1)
+            creature:RegisterEvent(CastSpells, 10000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 5
             burstRan = false
-            world:RemoveEvents()
+            creature:RemoveEvents()
         end
         print("CURRENT PHASE 4")
     end

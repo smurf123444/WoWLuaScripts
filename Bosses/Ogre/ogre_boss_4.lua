@@ -88,11 +88,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestNPC, 52890, true)
         end
     if burstRan == false then
-        world:RegisterEvent(PenetratingStrikes, 3000, 0)
+        creature:RegisterEvent(PenetratingStrikes, 3000, 0)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 2
             burstRan = false
         end
@@ -146,12 +146,12 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CanAggro()
         end
         if burstRan == false then
-            world:RegisterEvent(Boulders, 3000, 1)
-            world:RegisterEvent(Attack, 30000, 1)
+            creature:RegisterEvent(Boulders, 3000, 1)
+            creature:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -177,9 +177,9 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestNPC, 62269, true)
             closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 62269, true)
         end
-        world:RegisterEvent(Minions, {3500, 4000}, 1)
+        creature:RegisterEvent(Minions, {3500, 4000}, 1)
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
@@ -204,11 +204,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:CastSpell(closestNPC, 61915, true)
         end
-        world:RegisterEvent(EnragedRampage, {1500, 3000}, 3)
+        creature:RegisterEvent(EnragedRampage, {1500, 3000}, 3)
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 5
             burstRan = false
-            world:RemoveEvents()
+            creature:RemoveEvents()
         end
         print("CURRENT PHASE 4")
     end

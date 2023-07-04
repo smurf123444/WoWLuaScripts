@@ -74,11 +74,11 @@ local hasSummonWormExecuted = false
             end
             if burstRan == false then
                 creature:SendUnitYell("ASSAULT BOTS ... ATTACK!!! (7 sec)",0)
-                world:RegisterEvent(Burst, 7000, 1)
+                creature:RegisterEvent(Burst, 7000, 1)
                 burstRan = true
             end
             if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-                world:RemoveEvents()
+                creature:RemoveEvents()
                 currentPhase = 2
             end
         end
@@ -116,7 +116,7 @@ local hasSummonWormExecuted = false
                     closestNPC:MoveClear(true)
                 end
             end
-            world:RegisterEvent(Tremor, 10000, 1)
+            creature:RegisterEvent(Tremor, 10000, 1)
             local range = 40
             local targets = creature:GetPlayersInRange(range)
             local randomPlayer = nil
@@ -130,7 +130,7 @@ local hasSummonWormExecuted = false
                 creature:CanAggro()
             end
             if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-                world:RemoveEvents()
+                creature:RemoveEvents()
                 currentPhase = 3
                 burstRan = false
             end
@@ -177,13 +177,13 @@ local hasSummonWormExecuted = false
             end
             if burstRan == false then
                 creature:SendUnitYell("EAT FIRE ... HEHEHE!!! (7 sec)",0)
-                world:RegisterEvent(Lava, {1000, 4000}, 1)
+                creature:RegisterEvent(Lava, {1000, 4000}, 1)
                 burstRan = true
             end
             if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
                 currentPhase = 4
                 burstRan = false
-                world:RemoveEvents()
+                creature:RemoveEvents()
             end
             print("CURRENT PHASE 3")
         end

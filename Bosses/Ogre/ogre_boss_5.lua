@@ -76,14 +76,15 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 52890, true)
+            closestNPC:CastSpell(closestNPC, 25744, true)
         end
+        print("CURRENT PHASE 1")
     if burstRan == false then
-        world:RegisterEvent(CrazedRampage, 3000, 1)
+        creature:RegisterEvent(CrazedRampage, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 2
             burstRan = false
         end
@@ -103,9 +104,9 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            print("CURRENT PHASE 1")
-            closestNPC:CastSpell(closestNPC, 61882, true)
-            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
+
+            closestNPC:CastSpell(closestNPC, 71393, true)
+            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 71393, true)
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100
@@ -135,12 +136,12 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CanAggro()
         end
         if burstRan == false then
-            world:RegisterEvent(FlamesOfFury, 3000, 1)
-            world:RegisterEvent(Attack, 30000, 1)
+            creature:RegisterEvent(FlamesOfFury, 3000, 1)
+            creature:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -170,18 +171,18 @@ function RichardHeart.CheckHealth(event, creature, world)
                 for i = 1, addsCount do
                     local randomPlayer = players[math.random(1, #players)]
                     local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
-                    local add = closestNPC:SpawnCreature(35314, x, y, z, closestNPC:GetO(), 2, 0)
+                    local add = closestNPC:SpawnCreature(33121, x, y, z, closestNPC:GetO(), 2, 0)
                     add:AttackStart(randomPlayer)
                 end
             end
         end
 
         if burstRan == false then
-            world:RegisterEvent(SummonInferno, {3500, 4000}, 1)
+            creature:RegisterEvent(SummonInferno, {5000, 10000}, 0)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-            world:RemoveEvents()
+            creature:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
@@ -204,16 +205,24 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
+            local vinesCount = math.random(2,4)
+            for i = 1, vinesCount do
+                local vineX = closestNPC:GetX() + math.random(-5, 5)
+                local vineY = closestNPC:GetY() + math.random(-5, 5)
+                local vineZ = closestNPC:GetZ()
+                local vine = closestNPC:SummonGameObject(194952, vineX, vineY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
+                vine:SetPhaseMask(1)
+            end
             closestNPC:CastSpell(closestNPC, 41924, true)
         end
         if burstRan == false then
-            world:RegisterEvent(MoltenBerserker, {1500, 3000}, 1)
+            creature:RegisterEvent(MoltenBerserker, {1500, 3000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 5
             burstRan = false
-            world:RemoveEvents()
+            creature:RemoveEvents()
         end
         print("CURRENT PHASE 4")
     end
