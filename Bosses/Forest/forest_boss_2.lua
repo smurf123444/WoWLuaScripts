@@ -30,19 +30,37 @@ function RichardHeart.OnDied(event, creature, killer)
 end
 
 local burstRan = false
-local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
 
     if currentPhase == 1 then
-        local players = creature:GetPlayersInRange(30)
-        if not hasSummonWormExecuted then
-            hasSummonWormExecuted = true
+        local function SpawnAdds(eventid, delay, repeats, worldobject)
+            local range = 40 
+            local targets = worldobject:GetPlayersInRange(range)
+            local randomPlayer = nil
+                if #targets > 0 then
+                    local randomIndex = math.random(1, #targets) 
+                    randomPlayer = targets[randomIndex] 
+                end
+                local range = 100
+                local targets = worldobject:GetCreaturesInRange(range, 200010)
+                local closestNPC = nil
+                local closestNPCDistance = range + 1 
+                for _, player in ipairs(targets) do
+                    local distance = worldobject:GetDistance(player)
+                    if distance < closestNPCDistance then
+                        closestNPC = player
+                        closestNPCDistance = distance
+                    end
+                end
             local addsCount = math.random(2, 3)
-            for i = 1, addsCount do
-                local randomPlayer = players[math.random(1, #players)]
-                local add = creature:SpawnCreature(33966, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0)
-                add:AttackStart(randomPlayer)
-            end
+                for i = 1, addsCount do
+                    local add = closestNPC:SpawnCreature(33966, closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
+        end
+        if burstRan == false then
+            burstRan = true
+            world:RegisterEvent(SpawnAdds, {1000, 3000}, 1)
         end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
             currentPhase = 2

@@ -11,6 +11,18 @@ end
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
+    local range = 40
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1 
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 end
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
@@ -62,6 +74,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             currentPhase = 2
         end
     end
+    
     --(Hazard Phase):
     if currentPhase == 2 then
         local function Attack(eventid, delay, repeats, worldobject)

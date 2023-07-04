@@ -11,7 +11,19 @@ end
 
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
-    creature:PlayDirectSound(17242) 
+    creature:PlayDirectSound(17242)
+    local range = 40
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1 
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 end
 
 
@@ -35,21 +47,42 @@ local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
     if currentPhase == 1 then
-        local players = creature:GetPlayersInRange(30)
-        if not hasSummonWormExecuted then
-            hasSummonWormExecuted = true
-            local addsCount = math.random(2, 3)
-            for i = 1, addsCount do
-                local randomPlayer = players[math.random(1, #players)]
-                local add = creature:SpawnCreature(33966, creature:GetX(), creature:GetY(), creature:GetZ(), creature:GetO(), 2, 0)
-                add:AttackStart(randomPlayer)
+
+        local function Adds(eventid, delay, repeats, worldobject)
+            local npcRange = 100 
+            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200005)
+            local closestNPC = nil
+            local closestNPCDistance = npcRange + 1 
+            for _, npc in ipairs(npcTargets) do
+                local distance = worldobject:GetDistance(npc)
+                if distance < closestNPCDistance then
+                    closestNPC = npc
+                    closestNPCDistance = distance
+                end
+            end
+            local players = creature:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(1, 1)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(35314, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
             end
         end
+        if burstRan == false then
+            creature:SendUnitYell("Say Hello To my little FRIEND... HEHEHE...",0)
+            world:RegisterEvent(Adds, 3000, 1)
+            burstRan = true
+        end
+
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
             world:RemoveEvents()
             currentPhase = 2
         end
-end
+    end
     if currentPhase == 2 then
         --BERSERK PHASE
         local function Attack(eventid, delay, repeats, worldobject)

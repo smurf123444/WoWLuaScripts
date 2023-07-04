@@ -11,6 +11,18 @@ end
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 end
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
@@ -46,7 +58,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 52890, true)
+            closestNPC:CastSpell(closestNPC, 28420, true)
         end
     if burstRan == false then
         world:RegisterEvent(PenetratingStrikes, 3000, 1)
@@ -73,8 +85,8 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 61882, true)
-            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
+            closestNPC:CastSpell(closestNPC, 55886, true)
+            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 55886, true)
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100
@@ -142,7 +154,8 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local addsCount = math.random(1, 1)
                 for i = 1, addsCount do
                     local randomPlayer = players[math.random(1, #players)]
-                    local add = closestNPC:SpawnCreature(35314, closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), closestNPC:GetO(), 2, 0)
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(35314, x, y, z, closestNPC:GetO(), 2, 0)
                     add:AttackStart(randomPlayer)
                 end
             end

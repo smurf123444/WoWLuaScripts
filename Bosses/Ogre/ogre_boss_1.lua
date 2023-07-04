@@ -56,7 +56,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             local targets = worldobject:GetCreaturesInRange(range, 200012)
             local closestNPC = nil
             local closestDistance = range + 1 
-
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestDistance then
@@ -102,7 +101,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
             local closestDistance = range + 1
-
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestDistance then
