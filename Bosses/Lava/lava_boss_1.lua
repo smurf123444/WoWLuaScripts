@@ -125,7 +125,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         do
             creature:AttackStart(randomPlayer)
-            creature:MoveChase(randomPlayer)
             creature:CanAggro()
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
@@ -174,8 +173,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                 vine:SetPhaseMask(1)
             end
         end
-        world:RegisterEvent(Lava, {9500, 10000}, 10)
-        if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
+        if burstRan == false then
+            world:RegisterEvent(Lava, {9500, 10000}, 10)
+            burstRan = true
+        end
+        if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 4
             burstRan = false
             world:RemoveEvents()

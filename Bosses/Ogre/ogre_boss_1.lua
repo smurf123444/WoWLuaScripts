@@ -12,6 +12,9 @@ function RichardHeart.OnSpawn(event, creature)
     creature:PerformEmote(52)
     creature:EmoteState(52)
 end
+function Strike(eventId, dely, calls, creature)
+    creature:CastSpell(creature:GetVictim(), 62444, true)
+end
 
 function RichardHeart.OnEnterCombat(event, creature, target)
    local range = 40 
@@ -26,14 +29,25 @@ function RichardHeart.OnEnterCombat(event, creature, target)
         end
     end
     creature:AttackStart(closestPlayer)
+    creature:RegisterEvent(Strike, 3000, 0)
 end
-
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)
     creature:SendUnitYell(yellOptions, 0)
-    creature:RemoveEvents()
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 end
 
 function RichardHeart.OnDied(event, creature, killer)
@@ -65,7 +79,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:SendUnitYell("Ogre 1 Awakens!", 0)
             closestNPC:PerformEmote(53)
-            closestNPC:EmoteState(53)
         end
     if burstRan == false then
         world:RegisterEvent(Awaken, 3000, 1)
@@ -166,11 +179,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local range = 100
-            local targets = creature:GetPlayersInRange(range)
+            local targets = closestNPC:GetPlayersInRange(range)
             local closestPlayer = nil
             local closestDistance = range + 1
             for _, player in ipairs(targets) do
-                local distance = creature:GetDistance(player)
+                local distance = closestNPC:GetDistance(player)
                 if (distance < closestDistance) then
                     closestPlayer = player
                     closestDistance = distance
@@ -206,11 +219,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:CastSpell(closestNPC, 41924, true)
             local range = 100
-            local targets = creature:GetPlayersInRange(range)
+            local targets = closestNPC:GetPlayersInRange(range)
             local closestPlayer = nil
             local closestDistance = range + 1
             for _, player in ipairs(targets) do
-                local distance = creature:GetDistance(player)
+                local distance = closestNPC:GetDistance(player)
                 if (distance < closestDistance) then
                     closestPlayer = player
                     closestDistance = distance

@@ -45,7 +45,7 @@ local burstRan = false
 function RichardHeart.CheckHealth(event, creature, world)
         -- (Transform & Movement Phase):
         if currentPhase == 1 then
-            creature:SendUnitYell("Prepare for DOOM! (7 sec)",0)
+
             local function Burst(eventid, delay, repeats, worldobject)
                 local range = 100 
                 local targets = worldobject:GetCreaturesInRange(range, 200005)
@@ -60,10 +60,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
                 print(worldobject:GetName())
                 print(closestNPC)
+                
                 closestNPC:MoveTo(1, 2193, 2309, 30)
                 closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 17086, true)
             end
             if burstRan == false then
+                creature:SendUnitYell("Prepare for DOOM! (7 sec)",0)
                 world:RegisterEvent(Burst, 7000, 1)
                 burstRan = true
             end

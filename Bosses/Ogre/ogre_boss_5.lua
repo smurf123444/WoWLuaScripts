@@ -8,6 +8,11 @@ function RichardHeart.OnSpawn(event, creature)
     creature:CastSpell(creature, 41924, true)
 end
 
+function Strike(eventId, dely, calls, creature)
+    creature:CastSpell(creature:GetVictim(), 62444, true)
+end
+
+
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
@@ -23,13 +28,25 @@ function RichardHeart.OnEnterCombat(event, creature, target)
         end
     end
     creature:AttackStart(closestPlayer)
+    creature:RegisterEvent(Strike, 3000, 0)
 end
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)
     creature:SendUnitYell(yellOptions, 0)
-    creature:RemoveEvents()
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 end
 
 function RichardHeart.OnDied(event, creature, killer)
@@ -39,6 +56,7 @@ function RichardHeart.OnDied(event, creature, killer)
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
     creature:RemoveEvents()
+    currentPhase = 1
 end
 
 local burstRan = false
@@ -85,6 +103,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
+            print("CURRENT PHASE 1")
             closestNPC:CastSpell(closestNPC, 61882, true)
             closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
         end
