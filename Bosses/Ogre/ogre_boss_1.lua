@@ -9,8 +9,6 @@ function RichardHeart.OnSpawn(event, creature)
     creature:SetAggroEnabled(false)
     creature:CanFly(true)
     creature:SetDisableGravity(true)
-    creature:PerformEmote(52)
-    creature:EmoteState(52)
 end
 function Strike(eventId, dely, calls, creature)
     creature:CastSpell(creature:GetVictim(), 62444, true)

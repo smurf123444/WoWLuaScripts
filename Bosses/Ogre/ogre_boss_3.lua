@@ -26,7 +26,7 @@ function RichardHeart.OnEnterCombat(event, creature, target)
         end
     end
     creature:AttackStart(closestPlayer)
-    world:RegisterEvent(Strike, 3000, 0)
+    creature:RegisterEvent(Strike, 3000, 0)
 end
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
