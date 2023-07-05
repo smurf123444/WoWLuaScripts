@@ -7,7 +7,9 @@ function RichardHeart.OnSpawn(event, creature)
     creature:SetWanderRadius(10)
     creature:CastSpell(creature, 41924, true)
 end
-
+function Strike(eventId, dely, calls, creature)
+    creature:CastSpell(creature:GetVictim(), 62444, true)
+end
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
@@ -23,13 +25,13 @@ function RichardHeart.OnEnterCombat(event, creature, target)
         end
     end
     creature:AttackStart(closestPlayer)
+    creature:RegisterEvent(Strike, 3000, 0)
 end
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)
     creature:SendUnitYell(yellOptions, 0)
-    creature:RemoveEvents()
 end
 
 function RichardHeart.OnDied(event, creature, killer)
@@ -38,7 +40,7 @@ function RichardHeart.OnDied(event, creature, killer)
     if(killer:GetObjectType() == "Player") then
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
-    creature:RemoveEvents()
+   creature:RemoveEvents()
     currentPhase = 1
 end
 local burstRan = false
@@ -66,11 +68,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             if burstRan == false then
                 creature:SendUnitYell("Prepare for DOOM! (7 sec)",0)
-                creature:RegisterEvent(Burst, 7000, 1)
+                world:RegisterEvent(Burst, 7000, 1)
                 burstRan = true
             end
             if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-                creature:RemoveEvents()
+               world:RemoveEvents()
                 currentPhase = 2
             end
         end
@@ -108,7 +110,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPC:MoveClear(true)
                 end
             end
-            creature:RegisterEvent(Tremor, 10000, 1)
+            world:RegisterEvent(Tremor, 10000, 1)
             local range = 40
             local targets = creature:GetPlayersInRange(range)
             local randomPlayer = nil
@@ -122,7 +124,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 creature:CanAggro()
             end
             if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-                creature:RemoveEvents()
+               world:RemoveEvents()
                 currentPhase = 3
                 burstRan = false
             end
@@ -167,12 +169,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                     vine:SetPhaseMask(1)
                 end
             end
-            creature:RegisterEvent(Lava, {9500, 10000}, 10)
+            world:RegisterEvent(Lava, {9500, 10000}, 10)
             if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
                 
                 currentPhase = 4
                 burstRan = false
-                creature:RemoveEvents()
+               world:RemoveEvents()
             end
             print("CURRENT PHASE 3")
         end

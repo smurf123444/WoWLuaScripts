@@ -56,7 +56,7 @@ function RichardHeart.OnDied(event, creature, killer)
     if(killer:GetObjectType() == "Player") then
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
-    creature:RemoveEvents()
+   creature:RemoveEvents()
     currentPhase = 1
 end
 
@@ -81,11 +81,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:PerformEmote(53)
         end
     if burstRan == false then
-        creature:RegisterEvent(Awaken, 3000, 1)
+        world:RegisterEvent(Awaken, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-            creature:RemoveEvents()
+          -- world:RemoveEvents()
             currentPhase = 2
             burstRan = false
         end
@@ -140,12 +140,12 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:MoveClear(true)
         end
         if burstRan == false then
-            creature:RegisterEvent(WhirlWind, 3000, 1)
-            creature:RegisterEvent(Attack, 30000, 1)
+            world:RegisterEvent(WhirlWind, 3000, 1)
+            world:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-            creature:RemoveEvents()
+         --  world:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -191,10 +191,10 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:AttackStart(closestPlayer)
         end
-        creature:RegisterEvent(Minions, {3500, 4000}, 1)
+        world:RegisterEvent(Minions, {3500, 4000}, 1)
         
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-            creature:RemoveEvents()
+           world:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
@@ -232,9 +232,9 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:AttackStart(closestPlayer)
             closestNPC:CastSpell(closestNPC:GetVictim(), 62444, true)
         end
-        creature:RegisterEvent(EnragedRampage, 1000, 0)
+        world:RegisterEvent(EnragedRampage, 1000, 0)
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
-            creature:RemoveEvents()
+           world:RemoveEvents()
             currentPhase = 5
             burstRan = false
         end
@@ -273,11 +273,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestNPC:GetVictim(), 62444, true)
             closestNPC:CastSpell(closestNPC, 41924, true)
         end
-        creature:RegisterEvent(LastStand, 1000, 0)
+        world:RegisterEvent(LastStand, 1000, 0)
         if creature:HealthBelowPct(5) then
             currentPhase = 5
             burstRan = false
-            creature:RemoveEvents()
+           world:RemoveEvents()
         end
         print("CURRENT PHASE 5")
     end

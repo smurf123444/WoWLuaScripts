@@ -8,7 +8,9 @@ function RichardHeart.OnSpawn(event, creature)
     creature:SetWanderRadius(10)
     creature:CastSpell(creature, 41924, true)
 end
-
+function Strike(eventId, dely, calls, creature)
+    creature:CastSpell(creature:GetVictim(), 62444, true)
+end
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
@@ -24,6 +26,7 @@ function RichardHeart.OnEnterCombat(event, creature, target)
         end
     end
     creature:AttackStart(closestPlayer)
+    creature:RegisterEvent(Strike, 3000, 0)
 end
 
 
@@ -31,7 +34,7 @@ function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)
     creature:SendUnitYell(yellOptions, 0)
-    creature:RemoveEvents()
+   world:RemoveEvents()
 end
 
 function RichardHeart.OnDied(event, creature, killer)
@@ -40,7 +43,7 @@ function RichardHeart.OnDied(event, creature, killer)
     if(killer:GetObjectType() == "Player") then
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
     end
-    creature:RemoveEvents()
+   creature:RemoveEvents()
     currentPhase = 1
 end
 
@@ -76,12 +79,12 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if burstRan == false then
             creature:SendUnitYell("I Would like you to meet my friend... HEHEHE...",0)
-            creature:RegisterEvent(Adds, 3000, 1)
+            world:RegisterEvent(Adds, 3000, 1)
             burstRan = true
         end
 
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-            creature:RemoveEvents()
+           world:RemoveEvents()
             currentPhase = 2
         end
     end
@@ -125,11 +128,11 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if burstRan == false then
             burstRan = true
-            creature:RegisterEvent(Attack,  {6000, 9000}, 1)
+            world:RegisterEvent(Attack,  {6000, 9000}, 1)
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
             currentPhase = 3
-            creature:RemoveEvents()
+           world:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 2")
@@ -167,12 +170,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:MoveClear(true)
         end
         if burstRan == false then
-             creature:RegisterEvent(AttackAgain, {6000, 10000}, 1)
+             world:RegisterEvent(AttackAgain, {6000, 10000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
-            creature:RemoveEvents()
+           world:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 3")
@@ -214,12 +217,12 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
         end
         if burstRan == false and currentPhase == 4 then
-            creature:RegisterEvent(CastSpells, 1000, 1)
+            world:RegisterEvent(CastSpells, 1000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 5
-            creature:RemoveEvents()
+           world:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 4")
