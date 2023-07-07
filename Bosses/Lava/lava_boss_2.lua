@@ -48,7 +48,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         -- (Transform & Movement Phase):
         if currentPhase == 1 then
 
-            local function Burst(eventid, delay, repeats, worldobject)
+            local function MoveToDoor(eventid, delay, repeats, worldobject)
                 local range = 100 
                 local targets = worldobject:GetCreaturesInRange(range, 200005)
                 local closestNPC = nil
@@ -60,71 +60,28 @@ function RichardHeart.CheckHealth(event, creature, world)
                         closestDistance = distance
                     end
                 end
-                print(worldobject:GetName())
-                print(closestNPC)
-                
-                closestNPC:MoveTo(1, 2193, 2309, 30)
-                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 17086, true)
+                closestNPC:MoveTo(1, 2199, 2320, 25)
             end
             if burstRan == false then
-                creature:SendUnitYell("Prepare for DOOM! (7 sec)",0)
-                world:RegisterEvent(Burst, 7000, 1)
+                creature:SendUnitYell("Come and Catch me bitch",0)
+                world:RegisterEvent(MoveToDoor, 1000, 1)
                 burstRan = true
             end
             if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-               world:RemoveEvents()
                 currentPhase = 2
             end
         end
         --Weather Change
         if currentPhase == 2 then
-            local function Tremor(eventid, delay, repeats, worldobject)
-                local range = 100 
-                local targets = worldobject:GetPlayersInRange(range)
-                local closestPlayer = nil
-                local closestDistance = range + 1
-                for _, player in ipairs(targets) do
-                    local distance = worldobject:GetDistance(player)
-                    if distance < closestDistance then
-                        closestPlayer = player
-                        closestDistance = distance
-                    end
-                end
-                local npcRange = 100 
-                local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200005)
-                local closestNPC = nil
-                local closestNPCDistance = npcRange + 1 
-                for _, npc in ipairs(npcTargets) do
-                    local distance = worldobject:GetDistance(npc)
-                    if distance < closestNPCDistance then
-                        closestNPC = npc
-                        closestNPCDistance = distance
-                    end
-                end
-                print(worldobject:GetName())
-                print(closestPlayer)
-                if closestNPC ~= nil and closestPlayer ~= nil then
-                    closestNPC:AttackStart(closestPlayer)
-                    closestNPC:MoveChase(closestPlayer)
-                    closestNPC:CanAggro()
-                    closestNPC:MoveClear(true)
-                end
-            end
-            world:RegisterEvent(Tremor, 10000, 1)
-            local range = 40
-            local targets = creature:GetPlayersInRange(range)
-            local randomPlayer = nil
-            if #targets > 0 then
-                local randomIndex = math.random(1, #targets) 
-                randomPlayer = targets[randomIndex]
-            end
-            do
-                creature:AttackStart(randomPlayer)
-                creature:MoveChase(randomPlayer)
-                creature:CanAggro()
-            end
+            local gameObjectsInRange = world:GetNearObject( 100, 0 , 13965 )
+            gameObjectsInRange:SetGoState( 0 )
+
+--[[             if burstRan == false then
+                world:RegisterEvent(OpenDoor, 10000, 1)
+                burstRan = true
+            end ]]
             if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-               world:RemoveEvents()
+
                 currentPhase = 3
                 burstRan = false
             end
@@ -132,20 +89,8 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         --Walk inside Building
         if currentPhase == 3 then
-            local range = 40
-            local targets = creature:GetPlayersInRange(range)
-            local randomPlayer = nil
-            if #targets > 0 then
-                local randomIndex = math.random(1, #targets)
-                randomPlayer = targets[randomIndex]
-            end
-            do
-                creature:AttackStart(randomPlayer)
-                creature:MoveChase(randomPlayer)
-                creature:CanAggro()
-            end
-            creature:CastSpellAoF(creature:GetX(), creature:GetY(), creature:GetZ(), 62400, true)
-            function Lava(eventid, delay, repeats, worldobject)
+
+            function GetInside(eventid, delay, repeats, worldobject)
                 local range = 100 
                 local targets = worldobject:GetCreaturesInRange(range, 200005)
                 local closestNPC = nil
@@ -157,29 +102,61 @@ function RichardHeart.CheckHealth(event, creature, world)
                         closestNPCDistance = distance
                     end
                 end
-                if closestNPC == nil then
-                    return
-                end
-                local vinesCount = math.random(4, 6)
-                for i = 1, vinesCount do
-                    local vineX = closestNPC:GetX() + math.random(-5, 5)
-                    local vineY = closestNPC:GetY() + math.random(-5, 5)
-                    local vineZ = closestNPC:GetZ()
-                    local vine = closestNPC:SummonGameObject(194952, vineX, vineY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
-                    vine:SetPhaseMask(1)
-                end
+                closestNPC:MoveTo(1, 2205, 2329, 25)
             end
-            world:RegisterEvent(Lava, {9500, 10000}, 10)
-            if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-                
-                currentPhase = 4
-                burstRan = false
-               world:RemoveEvents()
+            if burstRan == false then
+                world:RegisterEvent(GetInside, {1000, 3000}, 1)
+                burstRan = true
             end
+
+        if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
+            currentPhase = 4
+            burstRan = false
+
+        end
             print("CURRENT PHASE 3")
         end
         -- Close door behind, unleash hell
         if currentPhase == 4 then
+
+            function CloseDoorBehind(eventid, delay, repeats, worldobject)
+                local range = 100 
+                local targets = worldobject:GetCreaturesInRange(range, 200005)
+                local closestNPC = nil
+                local closestNPCDistance = range + 1 
+                for _, player in ipairs(targets) do
+                    local distance = worldobject:GetDistance(player)
+                    if distance < closestNPCDistance then
+                        closestNPC = player
+                        closestNPCDistance = distance
+                    end
+                end
+                local gameObjectsInRange = worldobject:GetNearObject( 100, 0 , 13965 )
+                gameObjectsInRange:SetGoState( 1 )
+                local vinesCount = math.random(4, 6)
+                local centerX = 2205
+                local centerY = 2329
+                for i = 1, vinesCount do
+                    local offsetX = math.random(-15, 15)
+                    local offsetY = math.random(-15, 15)
+                    local objectX = centerX + offsetX
+                    local objectY = centerY + offsetY
+                    local vineZ = closestNPC:GetZ()
+                    local vine = closestNPC:SummonGameObject(194952, objectX, objectY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
+                    vine:SetPhaseMask(1)
+                end
+            end
+
+            if burstRan == false then
+                world:RegisterEvent(CloseDoorBehind, {1000, 3000}, 1)
+                burstRan = true
+            end
+        if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
+            currentPhase = 5
+            burstRan = false
+            world:RemoveEvents()
+        end
+        print("CURRENT PHASE 4")
         end
 end
 

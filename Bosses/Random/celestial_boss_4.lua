@@ -60,7 +60,7 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-    --Mind Control
+    --Stellar Surge Spells
     if currentPhase == 1 then
         local function MindControl(eventid, delay, repeats, worldobject)
             local range = 100
@@ -76,7 +76,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local range = 100
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200022)
             local closestNPC = nil
             local closestDistance = range + 1
             for _, player in ipairs(targets) do
@@ -86,7 +86,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestPlayer, 41397, true)
+            closestNPC:CastSpell(closestPlayer, 65854, true)
         end
     if burstRan == false then
         world:RegisterEvent(MindControl, 3000, 1)
@@ -97,11 +97,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-    -- Shadowmeld
+    -- Supernova Blast AoE
     if currentPhase == 2 then
         local function Shadowmeld(eventid, delay, repeats, worldobject)
             local range = 100
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200022)
             local closestNPC = nil
             local closestDistance = range + 1 
 
@@ -129,7 +129,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local npcRange = 100 
-            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200018)
+            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200022)
             local closestNPC = nil
             local closestNPCDistance = npcRange + 1
             for _, npc in ipairs(npcTargets) do
@@ -153,7 +153,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-    --Mental Colapse
+    --Void Rifts: Adds
     if currentPhase == 3 then
         function MentalCollapse(eventid, delay, repeats, worldobject)
             local range = 100
@@ -169,7 +169,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200022)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -195,7 +195,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-    --Desperation 
+    --Astral Projection Mini boss
     if currentPhase == 4 then
         function Desperation(eventid, delay, repeats, worldobject)
             local range = 100
@@ -211,7 +211,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200022)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -239,8 +239,8 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
 end
 
-RegisterCreatureEvent(200018, 1, RichardHeart.OnEnterCombat)
-RegisterCreatureEvent(200018, 2, RichardHeart.OnLeaveCombat)
-RegisterCreatureEvent(200018, 4, RichardHeart.OnDied)
-RegisterCreatureEvent(200018, 5, RichardHeart.OnSpawn)
-RegisterCreatureEvent(200018, 9, RichardHeart.CheckHealth)
+RegisterCreatureEvent(200022, 1, RichardHeart.OnEnterCombat)
+RegisterCreatureEvent(200022, 2, RichardHeart.OnLeaveCombat)
+RegisterCreatureEvent(200022, 4, RichardHeart.OnDied)
+RegisterCreatureEvent(200022, 5, RichardHeart.OnSpawn)
+RegisterCreatureEvent(200022, 9, RichardHeart.CheckHealth)

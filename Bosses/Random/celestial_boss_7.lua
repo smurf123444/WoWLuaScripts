@@ -60,23 +60,11 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
-    --Mind Control
+    --Stellar Alignment:: Puzzle
     if currentPhase == 1 then
-        local function MindControl(eventid, delay, repeats, worldobject)
+        local function StellarAlignment(eventid, delay, repeats, worldobject)
             local range = 100
-            local targets = worldobject:GetPlayersInRange(range)
-            local closestPlayer = nil
-            local closestDistance = range + 1
-
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestDistance then
-                    closestPlayer = player
-                    closestDistance = distance
-                end
-            end
-            local range = 100
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200025)
             local closestNPC = nil
             local closestDistance = range + 1
             for _, player in ipairs(targets) do
@@ -86,10 +74,21 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestPlayer, 41397, true)
+            local vinesCount = math.random(4, 6)
+            local centerX = closestNPC:GetX()
+            local centerY = closestNPC:GetY()
+            for i = 1, vinesCount do
+                local offsetX = math.random(-15, 15)
+                local offsetY = math.random(-15, 15)
+                local objectX = centerX + offsetX
+                local objectY = centerY + offsetY
+                local vineZ = closestNPC:GetZ()
+                local vine = closestNPC:SummonGameObject(194952, objectX, objectY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
+                vine:SetPhaseMask(1)
+            end
         end
     if burstRan == false then
-        world:RegisterEvent(MindControl, 3000, 1)
+        world:RegisterEvent(StellarAlignment, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
@@ -97,11 +96,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = false
         end
     end
-    -- Shadowmeld
+    -- Astral Surge: Player Debuff
     if currentPhase == 2 then
         local function Shadowmeld(eventid, delay, repeats, worldobject)
             local range = 100
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200025)
             local closestNPC = nil
             local closestDistance = range + 1 
 
@@ -129,7 +128,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local npcRange = 100 
-            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200018)
+            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200025)
             local closestNPC = nil
             local closestNPCDistance = npcRange + 1
             for _, npc in ipairs(npcTargets) do
@@ -153,7 +152,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 2")
     end
-    --Mental Colapse
+    --Void Tendrils: Adds
     if currentPhase == 3 then
         function MentalCollapse(eventid, delay, repeats, worldobject)
             local range = 100
@@ -169,7 +168,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200025)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -195,7 +194,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         print("CURRENT PHASE 3")
     end
-    --Desperation 
+    --Celestial Cataclysm
     if currentPhase == 4 then
         function Desperation(eventid, delay, repeats, worldobject)
             local range = 100
@@ -211,7 +210,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200018)
+            local targets = worldobject:GetCreaturesInRange(range, 200025)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -239,8 +238,8 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
 end
 
-RegisterCreatureEvent(200018, 1, RichardHeart.OnEnterCombat)
-RegisterCreatureEvent(200018, 2, RichardHeart.OnLeaveCombat)
-RegisterCreatureEvent(200018, 4, RichardHeart.OnDied)
-RegisterCreatureEvent(200018, 5, RichardHeart.OnSpawn)
-RegisterCreatureEvent(200018, 9, RichardHeart.CheckHealth)
+RegisterCreatureEvent(200025, 1, RichardHeart.OnEnterCombat)
+RegisterCreatureEvent(200025, 2, RichardHeart.OnLeaveCombat)
+RegisterCreatureEvent(200025, 4, RichardHeart.OnDied)
+RegisterCreatureEvent(200025, 5, RichardHeart.OnSpawn)
+RegisterCreatureEvent(200025, 9, RichardHeart.CheckHealth)

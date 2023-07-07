@@ -77,11 +77,12 @@ local hasSummonWormExecuted = false
             if burstRan == false then
                 creature:SendUnitYell("ASSAULT BOTS ... ATTACK!!! (7 sec)",0)
                 world:RegisterEvent(Burst, 7000, 1)
+                
                 burstRan = true
             end
             if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-               world:RemoveEvents()
                 currentPhase = 2
+                hasSummonWormExecuted = false
             end
         end
         --Tower Defense Phase
@@ -132,7 +133,6 @@ local hasSummonWormExecuted = false
                 creature:CanAggro()
             end
             if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-               world:RemoveEvents()
                 currentPhase = 3
                 burstRan = false
             end
@@ -191,7 +191,42 @@ local hasSummonWormExecuted = false
         end
         -- Mounted Assault
         if currentPhase == 4 then
-            
+            function MountedAssault(eventid, delay, repeats, worldobject)
+                local range = 100 
+                local targets = worldobject:GetCreaturesInRange(range, 200006)
+                local closestNPC = nil
+                local closestNPCDistance = range + 1 
+                for _, player in ipairs(targets) do
+                    local distance = worldobject:GetDistance(player)
+                    if distance < closestNPCDistance then
+                        closestNPC = player
+                        closestNPCDistance = distance
+                    end
+                end
+                local players = closestNPC:GetPlayersInRange(30)
+                if not hasSummonWormExecuted then
+                    hasSummonWormExecuted = true
+                    local addsCount = math.random(1, 1)
+                    for i = 1, addsCount do
+                        local randomPlayer = players[math.random(1, #players)]
+                        local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                        local add = closestNPC:SpawnCreature(39173, x, y, z, closestNPC:GetO(), 2, 0)
+                        add:AttackStart(randomPlayer)
+                    end
+                end
+            end
+
+            if burstRan == false then
+                creature:SendUnitYell("EAT FIRE ... HEHEHE!!! (7 sec)",0)
+                world:RegisterEvent(MountedAssault, {1000, 4000}, 1)
+                burstRan = true
+            end
+            if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
+                currentPhase = 5
+                burstRan = false
+               world:RemoveEvents()
+            end
+            print("CURRENT PHASE 3")
         end
     end
 
