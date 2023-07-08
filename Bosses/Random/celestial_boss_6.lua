@@ -155,7 +155,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Void Corruption: Adds
     if currentPhase == 3 then
-        function MentalCollapse(eventid, delay, repeats, worldobject)
+        function VoidCorruption(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -182,11 +182,21 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
-            closestNPC:CastSpell(closestPlayer, 31046, true)
+            local players = closestNPC:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(1, 1)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(20779, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
+            end
         end
 
         if burstRan == false then
-            world:RegisterEvent(MentalCollapse, {3500, 4000}, 1)
+            world:RegisterEvent(VoidCorruption, {3500, 4000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
@@ -197,7 +207,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Astral-Void Conflux : AoE
     if currentPhase == 4 then
-        function Desperation(eventid, delay, repeats, worldobject)
+        function SupernovaExplosion(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -221,13 +231,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            if closestNPC == nil then
-                return
-            end
-            closestNPC:CastSpell(closestPlayer, 62444, true)
+
+            closestNPC:CastSpell(closestPlayer, 64487, true)
         end
         if burstRan == false then
-            world:RegisterEvent(Desperation, 500, 10)
+            world:RegisterEvent(SupernovaExplosion, 500, 3)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then

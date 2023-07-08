@@ -68,12 +68,13 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
             currentPhase = 2
-           world:RemoveEvents()
+            burstRan = false
         end
     end
 
     if currentPhase == 2 then
-        local function Attack(eventid, delay, repeats, worldobject)
+        --Game Objects Appear
+        local function GameObjects(eventid, delay, repeats, worldobject)
             print("Ran Attack")
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200008)
@@ -106,32 +107,14 @@ function RichardHeart.CheckHealth(event, creature, world)
                 vine:SetPhaseMask(1) 
             end
                 closestNPC:AttackStart(closestPlayer)
-                closestNPC:CanAggro()
-                closestNPC:MoveClear(true)
         end
-        local function CastSpells(eventid, delay, repeats, worldobject)
-            print("Ran CastSpells")
-            local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200007)
-            local closestNPC = nil
-            local closestNPCDistance = range + 1 
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestNPCDistance then
-                    closestNPC = player
-                    closestNPCDistance = distance
-                end
-            end
-            closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
-        end
+
         if burstRan == false then
-            world:RegisterEvent(Attack,  {1000, 3000}, 1)
+            world:RegisterEvent(GameObjects,  {1000, 3000}, 1)
             burstRan = true
-            world:RegisterEvent(CastSpells,  {6000, 9000}, 3)
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
             currentPhase = 3
-           world:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 2")
@@ -193,23 +176,13 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
-           world:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 3")
     end
 
     if currentPhase == 4 then
-        local range = 40 
-        local targets = creature:GetPlayersInRange(range)
-        local randomPlayer = nil
-        if #targets > 0 then
-            local randomIndex = math.random(1, #targets)
-            randomPlayer = targets[randomIndex]
-        end
-        creature:AttackStart(randomPlayer)
-        creature:MoveChase(randomPlayer)
-        creature:CanAggro()
+
         local function CastSpells(eventid, delay, repeats, worldobject)
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200008)
@@ -229,9 +202,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local randomIndex = math.random(1, #targets)
                 randomPlayer = targets[randomIndex]
             end
-            if closestNPC then
                 closestNPC:CastSpell(randomPlayer, 69558, true)
-            end
         end
         if burstRan == false and currentPhase == 4 then
             world:RegisterEvent(CastSpells, 10000, 10)

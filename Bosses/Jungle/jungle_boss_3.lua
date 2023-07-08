@@ -82,13 +82,14 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
 
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-           world:RemoveEvents()
+            burstRan = false
+           hasSummonWormExecuted = false
             currentPhase = 2
         end
     end
     if currentPhase == 2 then
         --BERSERK PHASE
-        local function Attack(eventid, delay, repeats, worldobject)
+        local function BERSERK(eventid, delay, repeats, worldobject)
             print("Ran Attack")
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200003)
@@ -113,15 +114,13 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
                 closestNPC:AttackStart(closestPlayer)
-                closestNPC:CanAggro()
-                closestNPC:MoveClear(true)
+                closestNPC:CastSpell(closestNPC, 41924, true)
         end
         if burstRan == false then
             burstRan = true
-            world:RegisterEvent(Attack,  {6000, 9000}, 1)
+            world:RegisterEvent(BERSERK,  {6000, 9000}, 1)
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-           world:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -180,9 +179,6 @@ function RichardHeart.CheckHealth(event, creature, world)
                 closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 72272, true)
                 closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 69760, true)
                 closestNPC:AttackStart(closestPlayer)
-                closestNPC:CanAggro()
-                closestNPC:MoveClear(true)
-            --    closestNPC:CastSpell(closestNPC:GetVictim(), 69558, true)
         end
         if burstRan == false then
             world:RegisterEvent(MoveAgain, {1000, 5000}, 1)
@@ -190,24 +186,14 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-           world:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
         print("CURRENT PHASE 3")
     end
     if currentPhase == 4 then
-        local range = 40 
-        local targets = creature:GetPlayersInRange(range)
-        local randomPlayer = nil
-        if #targets > 0 then
-            local randomIndex = math.random(1, #targets)
-            randomPlayer = targets[randomIndex]
-        end
-        creature:AttackStart(randomPlayer)
-        creature:MoveChase(randomPlayer)
-        creature:CanAggro()
-        local function CastSpells(eventid, delay, repeats, worldobject)
+        --Shadow Illusion
+        local function ShadowIllusion(eventid, delay, repeats, worldobject)
             print("Ran CastSpells")
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200003)
@@ -227,11 +213,21 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local randomIndex = math.random(1, #targets)
                 randomPlayer = targets[randomIndex] 
             end
-            closestNPC:CastSpell(randomPlayer, 69558, true)
-
+            local players = closestNPC:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(3, 5)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(30872, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
+            end
+            
         end
         if burstRan == false and currentPhase == 4 then
-            world:RegisterEvent(CastSpells, 10000, 10)
+            world:RegisterEvent(ShadowIllusion, 3000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then

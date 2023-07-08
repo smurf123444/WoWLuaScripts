@@ -101,12 +101,11 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     -- Temporal Rifts Adds 
     if currentPhase == 2 then
-        local function Shadowmeld(eventid, delay, repeats, worldobject)
+        local function TemporalRifts(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200023)
             local closestNPC = nil
             local closestDistance = range + 1 
-
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestDistance then
@@ -114,8 +113,17 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 58984, true)
-           -- closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
+            local players = closestNPC:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(1, 1)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(20779, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
+            end
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100
@@ -145,7 +153,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CanAggro()
         end
         if burstRan == false then
-            world:RegisterEvent(Shadowmeld, 3000, 1)
+            world:RegisterEvent(TemporalRifts, 3000, 1)
             world:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
@@ -184,7 +192,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
-            closestNPC:CastSpell(closestPlayer, 31046, true)
+            closestNPC:CastSpell(closestNPC, 62809, true)
         end
 
         if burstRan == false then
@@ -199,7 +207,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Astral Surge AoE Directed
     if currentPhase == 4 then
-        function Desperation(eventid, delay, repeats, worldobject)
+        function SupernovaExplosion(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -223,13 +231,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            if closestNPC == nil then
-                return
-            end
-            closestNPC:CastSpell(closestPlayer, 62444, true)
+
+            closestNPC:CastSpell(closestPlayer, 64487, true)
         end
         if burstRan == false then
-            world:RegisterEvent(Desperation, 500, 10)
+            world:RegisterEvent(SupernovaExplosion, 500, 3)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
@@ -238,7 +244,9 @@ function RichardHeart.CheckHealth(event, creature, world)
            world:RemoveEvents()
         end
         print("CURRENT PHASE 4")
-    end
+
+
+end
 end
 
 RegisterCreatureEvent(200023, 1, RichardHeart.OnEnterCombat)

@@ -92,18 +92,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            local range = 100 
-            local targets = worldobject:GetPlayersInRange(range)
-            local closestPlayer = nil
-            local closestDistance = range + 1
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestDistance then
-                    closestPlayer = player
-                    closestDistance = distance
-                end
-            end
-            local vinesCount = math.random(90, 100)
+            local vinesCount = math.random(10, 20)
             for i = 1, vinesCount do
                 local vineX = closestNPC:GetX() + math.random(-10, 10)
                 local vineY = closestNPC:GetY() + math.random(-10, 10)
@@ -119,8 +108,6 @@ function RichardHeart.CheckHealth(event, creature, world)
                 randomPlayer = targets[randomIndex] 
             end
             closestNPC:AttackStart(randomPlayer)
-            closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 57095, true)
-            closestNPC:CastSpell(randomPlayer, 57095, true)
         end
         if burstRan == false then
             burstRan = true
@@ -175,7 +162,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
             local closestDistance = range + 1
-
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestDistance then
@@ -183,11 +169,9 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 72272, true)
-                closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 69760, true)
                 closestNPC:AttackStart(closestPlayer)
                 closestNPC:CanAggro()
-                closestNPC:MoveClear(true)
+
         end
         if burstRan == false then
             world:RegisterEvent(MoveAgain, {1000, 5000}, 1)

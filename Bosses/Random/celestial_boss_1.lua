@@ -206,46 +206,47 @@ function RichardHeart.CheckHealth(event, creature, world)
         print("CURRENT PHASE 3")
     end
     --Supernova Explosion AoE
-    if currentPhase == 4 then
-        function Desperation(eventid, delay, repeats, worldobject)
-            local range = 100
-            local targets = worldobject:GetPlayersInRange(range)
-            local closestPlayer = nil
-            local closestDistance = range + 1
 
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestDistance then
-                    closestPlayer = player
-                    closestDistance = distance
+        if currentPhase == 4 then
+            function SupernovaExplosion(eventid, delay, repeats, worldobject)
+                local range = 100
+                local targets = worldobject:GetPlayersInRange(range)
+                local closestPlayer = nil
+                local closestDistance = range + 1
+    
+                for _, player in ipairs(targets) do
+                    local distance = worldobject:GetDistance(player)
+                    if distance < closestDistance then
+                        closestPlayer = player
+                        closestDistance = distance
+                    end
                 end
-            end
-            local range = 100 
-            local targets = worldobject:GetCreaturesInRange(range, 200019)
-            local closestNPC = nil
-            local closestNPCDistance = range + 1 
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestNPCDistance then
-                    closestNPC = player
-                    closestNPCDistance = distance
+                local range = 100 
+                local targets = worldobject:GetCreaturesInRange(range, 200019)
+                local closestNPC = nil
+                local closestNPCDistance = range + 1 
+                for _, player in ipairs(targets) do
+                    local distance = worldobject:GetDistance(player)
+                    if distance < closestNPCDistance then
+                        closestNPC = player
+                        closestNPCDistance = distance
+                    end
                 end
+
+                closestNPC:CastSpell(closestPlayer, 64487, true)
             end
-            if closestNPC == nil then
-                return
+            if burstRan == false then
+                world:RegisterEvent(SupernovaExplosion, 500, 3)
+                burstRan = true
             end
-            closestNPC:CastSpell(closestPlayer, 62444, true)
-        end
-        if burstRan == false then
-            world:RegisterEvent(Desperation, 500, 10)
-            burstRan = true
-        end
-        if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
-            currentPhase = 5
-            burstRan = false
-           world:RemoveEvents()
-        end
-        print("CURRENT PHASE 4")
+            if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
+                currentPhase = 5
+                burstRan = false
+               world:RemoveEvents()
+            end
+            print("CURRENT PHASE 4")
+
+
     end
 end
 

@@ -113,9 +113,10 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 58984, true)
+
             local players = closestNPC:GetPlayersInRange(30)
             if not hasSummonWormExecuted then
+                closestNPC:CastSpell(closestNPC, 58984, true)
                 hasSummonWormExecuted = true
                 local addsCount = math.random(1, 1)
                 for i = 1, addsCount do
@@ -222,7 +223,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Astral Beacon AoE
     if currentPhase == 4 then
-        function Desperation(eventid, delay, repeats, worldobject)
+        function SupernovaExplosion(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -246,14 +247,11 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            if closestNPC == nil then
-                return
-            end
-            closestNPC:CastSpell(closestNPC, 64487, true)
+
+            closestNPC:CastSpell(closestPlayer, 64487, true)
         end
         if burstRan == false then
-            world:RegisterEvent(Desperation, 500, 10)
-            
+            world:RegisterEvent(SupernovaExplosion, 500, 3)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
@@ -262,7 +260,9 @@ function RichardHeart.CheckHealth(event, creature, world)
            world:RemoveEvents()
         end
         print("CURRENT PHASE 4")
-    end
+
+
+end
 end
 
 RegisterCreatureEvent(200020, 1, RichardHeart.OnEnterCombat)

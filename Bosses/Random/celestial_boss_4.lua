@@ -62,7 +62,7 @@ local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
     --Stellar Surge Spells
     if currentPhase == 1 then
-        local function MindControl(eventid, delay, repeats, worldobject)
+        local function StellarSurge(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -89,7 +89,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestPlayer, 65854, true)
         end
     if burstRan == false then
-        world:RegisterEvent(MindControl, 3000, 1)
+        world:RegisterEvent(StellarSurge, 3000, 1)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
@@ -99,7 +99,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     -- Supernova Blast AoE
     if currentPhase == 2 then
-        local function Shadowmeld(eventid, delay, repeats, worldobject)
+        local function SupernovaBlast(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200022)
             local closestNPC = nil
@@ -112,8 +112,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 58984, true)
-           -- closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
+            closestNPC:CastSpell(closestNPC, 63631, true)
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100
@@ -143,7 +142,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CanAggro()
         end
         if burstRan == false then
-            world:RegisterEvent(Shadowmeld, 3000, 1)
+            world:RegisterEvent(SupernovaBlast, 3000, 1)
             world:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
@@ -155,7 +154,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Void Rifts: Adds
     if currentPhase == 3 then
-        function MentalCollapse(eventid, delay, repeats, worldobject)
+        function VoidRifts(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -179,14 +178,21 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            if closestNPC == nil then
-                return
+            local players = closestNPC:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(2, 4)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(20779, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
             end
-            closestNPC:CastSpell(closestPlayer, 31046, true)
         end
 
         if burstRan == false then
-            world:RegisterEvent(MentalCollapse, {3500, 4000}, 1)
+            world:RegisterEvent(VoidRifts, {3500, 4000}, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
@@ -197,19 +203,8 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Astral Projection Mini boss
     if currentPhase == 4 then
-        function Desperation(eventid, delay, repeats, worldobject)
-            local range = 100
-            local targets = worldobject:GetPlayersInRange(range)
-            local closestPlayer = nil
-            local closestDistance = range + 1
+        function AstralProjection(eventid, delay, repeats, worldobject)
 
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestDistance then
-                    closestPlayer = player
-                    closestDistance = distance
-                end
-            end
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200022)
             local closestNPC = nil
@@ -221,13 +216,20 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            if closestNPC == nil then
-                return
+            local players = closestNPC:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(1, 1)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(20779, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
             end
-            closestNPC:CastSpell(closestPlayer, 62444, true)
         end
         if burstRan == false then
-            world:RegisterEvent(Desperation, 500, 10)
+            world:RegisterEvent(AstralProjection, 500, 3)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then

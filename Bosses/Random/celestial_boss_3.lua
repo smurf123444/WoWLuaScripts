@@ -87,7 +87,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     -- Lunar Surge Defence
     if currentPhase == 2 then
-        local function Shadowmeld(eventid, delay, repeats, worldobject)
+        local function LunarSurge(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200021)
             local closestNPC = nil
@@ -100,8 +100,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:CastSpell(closestNPC, 58984, true)
-           -- closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
+            closestNPC:CastSpell(closestNPC, 62809, true)
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100
@@ -131,7 +130,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CanAggro()
         end
         if burstRan == false then
-            world:RegisterEvent(Shadowmeld, 3000, 1)
+            world:RegisterEvent(LunarSurge, 3000, 1)
             world:RegisterEvent(Attack, 30000, 1)
             burstRan = true
         end
@@ -167,9 +166,18 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            if closestNPC == nil then
-                return
+            local players = closestNPC:GetPlayersInRange(30)
+            if not hasSummonWormExecuted then
+                hasSummonWormExecuted = true
+                local addsCount = math.random(2, 4)
+                for i = 1, addsCount do
+                    local randomPlayer = players[math.random(1, #players)]
+                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local add = closestNPC:SpawnCreature(20779, x, y, z, closestNPC:GetO(), 2, 0)
+                    add:AttackStart(randomPlayer)
+                end
             end
+            
             closestNPC:CastSpell(closestPlayer, 31046, true)
         end
 
@@ -179,6 +187,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
             currentPhase = 4
+            hasSummonWormExecuted = false
             burstRan = false
         end
         print("CURRENT PHASE 3")
@@ -212,10 +221,10 @@ function RichardHeart.CheckHealth(event, creature, world)
             if closestNPC == nil then
                 return
             end
-            closestNPC:CastSpell(closestPlayer, 62444, true)
+            closestNPC:CastSpell(closestPlayer, 57058, true)
         end
         if burstRan == false then
-            world:RegisterEvent(Desperation, 500, 10)
+            world:RegisterEvent(Desperation, 500, 3)
             burstRan = true
         end
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
