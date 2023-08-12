@@ -51,11 +51,22 @@ local burstRan = false
 local hasSummonWormExecuted = false
 
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     if currentPhase == 1 then
-
         local function Adds(eventid, delay, repeats, worldobject)
             local npcRange = 100 
-            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200005)
+            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200002)
             local closestNPC = nil
             local closestNPCDistance = npcRange + 1 
             for _, npc in ipairs(npcTargets) do
@@ -65,7 +76,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            local players = creature:GetPlayersInRange(30)
+            local players = closestNPC:GetPlayersInRange(30)
             if not hasSummonWormExecuted then
                 hasSummonWormExecuted = true
                 local addsCount = math.random(1, 1)
@@ -82,7 +93,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             world:RegisterEvent(Adds, 3000, 1)
             burstRan = true
         end
-
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
             currentPhase = 2
             hasSummonWormExecuted = false
@@ -175,7 +185,6 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
                 closestNPC:AttackStart(closestPlayer)
-
         end
         if burstRan == false then
              world:RegisterEvent(SummonMiniBoss, {6000, 10000}, 1)
@@ -211,9 +220,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local randomIndex = math.random(1, #targets) 
                 randomPlayer = targets[randomIndex] 
             end
-
                 closestNPC:CastSpell(randomPlayer, 69558, true)
-
         end
         if burstRan == false and currentPhase == 4 then
             world:RegisterEvent(CastSpells, 1000, 1)

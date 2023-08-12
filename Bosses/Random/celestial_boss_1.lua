@@ -7,6 +7,7 @@ function RichardHeart.OnSpawn(event, creature)
     creature:SetWanderRadius(10)
     creature:CastSpell(creature, 41924, true)
 end
+
 function Strike(eventId, dely, calls, creature)
     creature:CastSpell(creature:GetVictim(), 62444, true)
 end
@@ -14,7 +15,7 @@ end
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
-    local range = 40 
+    local range = 40
     local targets = creature:GetPlayersInRange(range)
     local closestPlayer = nil
     local closestDistance = range + 1
@@ -33,7 +34,7 @@ function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)
     creature:SendUnitYell(yellOptions, 0)
-    local range = 40 
+    local range = 40
     local targets = creature:GetPlayersInRange(range)
     local closestPlayer = nil
     local closestDistance = range + 1
@@ -49,21 +50,32 @@ end
 
 function RichardHeart.OnDied(event, creature, killer)
     creature:SendUnitYell("Agh! Ugh.....OOhha..", 0)
-    creature:PlayDirectSound(17374) 
-    if(killer:GetObjectType() == "Player") then
-        killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
+    creature:PlayDirectSound(17374)
+    if (killer:GetObjectType() == "Player") then
+        killer:SendBroadcastMessage("You killed " .. creature:GetName() .. "!")
     end
-   creature:RemoveEvents()
+    creature:RemoveEvents()
     currentPhase = 1
 end
 
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     --Celestial Guardians Adds
     if currentPhase == 1 then
         local function MindControl(eventid, delay, repeats, worldobject)
-
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200019)
             local closestNPC = nil
@@ -81,16 +93,16 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local addsCount = math.random(2, 3)
                 for i = 1, addsCount do
                     local randomPlayer = players[math.random(1, #players)]
-                    local x, y, z = closestNPC:GetRelativePoint(math.random()*9, math.random()*math.pi*2)
+                    local x, y, z = closestNPC:GetRelativePoint(math.random() * 9, math.random() * math.pi * 2)
                     local add = closestNPC:SpawnCreature(29504, x, y, z, closestNPC:GetO(), 2, 0)
                     add:AttackStart(randomPlayer)
                 end
             end
         end
-    if burstRan == false then
-        world:RegisterEvent(MindControl, 3000, 1)
-        burstRan = true
-    end
+        if burstRan == false then
+            world:RegisterEvent(MindControl, 3000, 1)
+            burstRan = true
+        end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
             currentPhase = 2
             burstRan = false
@@ -114,7 +126,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200019)
             local closestNPC = nil
-            local closestDistance = range + 1 
+            local closestDistance = range + 1
 
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
@@ -138,7 +150,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            local npcRange = 100 
+            local npcRange = 100
             local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200019)
             local closestNPC = nil
             local closestNPCDistance = npcRange + 1
@@ -165,7 +177,7 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Cosmic Rifts Area Change
     if currentPhase == 3 then
-        function MentalCollapse(eventid, delay, repeats, worldobject)
+        function CosmicRifts(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetPlayersInRange(range)
             local closestPlayer = nil
@@ -178,10 +190,10 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            local range = 100 
+            local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200019)
             local closestNPC = nil
-            local closestNPCDistance = range + 1 
+            local closestNPCDistance = range + 1
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestNPCDistance then
@@ -193,10 +205,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                 return
             end
             closestNPC:CastSpell(closestPlayer, 31046, true)
+            closestPlayer:Teleport(1,2205,2329,25, 10 )
+            closestNPC:NearTeleport(2205,2329,25, 10)
         end
 
         if burstRan == false then
-            world:RegisterEvent(MentalCollapse, {3500, 4000}, 1)
+            world:RegisterEvent(CosmicRifts, { 3500, 4000 }, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
@@ -207,46 +221,45 @@ function RichardHeart.CheckHealth(event, creature, world)
     end
     --Supernova Explosion AoE
 
-        if currentPhase == 4 then
-            function SupernovaExplosion(eventid, delay, repeats, worldobject)
-                local range = 100
-                local targets = worldobject:GetPlayersInRange(range)
-                local closestPlayer = nil
-                local closestDistance = range + 1
-    
-                for _, player in ipairs(targets) do
-                    local distance = worldobject:GetDistance(player)
-                    if distance < closestDistance then
-                        closestPlayer = player
-                        closestDistance = distance
-                    end
+    if currentPhase == 4 then
+        function SupernovaExplosion(eventid, delay, repeats, worldobject)
+            local range = 100
+            local targets = worldobject:GetPlayersInRange(range)
+            local closestPlayer = nil
+            local closestDistance = range + 1
+
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestDistance then
+                    closestPlayer = player
+                    closestDistance = distance
                 end
-                local range = 100 
-                local targets = worldobject:GetCreaturesInRange(range, 200019)
-                local closestNPC = nil
-                local closestNPCDistance = range + 1 
-                for _, player in ipairs(targets) do
-                    local distance = worldobject:GetDistance(player)
-                    if distance < closestNPCDistance then
-                        closestNPC = player
-                        closestNPCDistance = distance
-                    end
+            end
+            local range = 100
+            local targets = worldobject:GetCreaturesInRange(range, 200019)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
                 end
-
-                closestNPC:CastSpell(closestPlayer, 64487, true)
             end
-            if burstRan == false then
-                world:RegisterEvent(SupernovaExplosion, 500, 3)
-                burstRan = true
-            end
-            if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
-                currentPhase = 5
-                burstRan = false
-               world:RemoveEvents()
-            end
-            print("CURRENT PHASE 4")
 
+            closestNPC:CastSpell(closestPlayer, 64487, true)
+        end
 
+        if burstRan == false then
+            world:RegisterEvent(SupernovaExplosion, 500, 3)
+            burstRan = true
+        end
+        if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
+            currentPhase = 5
+            burstRan = false
+            world:RemoveEvents()
+        end
+        print("CURRENT PHASE 4")
     end
 end
 

@@ -47,6 +47,18 @@ end
 local burstRan = false
 
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     --(Transform & Movement Phase):
     if currentPhase == 1 then
         local function Move(eventid, delay, repeats, worldobject)
@@ -72,8 +84,8 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = true
         end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-           world:RemoveEvents()
             currentPhase = 2
+            burstRan = false
         end
     end
     
@@ -82,7 +94,7 @@ function RichardHeart.CheckHealth(event, creature, world)
         local function Attack(eventid, delay, repeats, worldobject)
             print("Ran Attack")
             local range = 100
-            local targets = worldobject:GetCreaturesInRange(range, 200011)
+            local targets = worldobject:GetCreaturesInRange(range, 200001)
             local closestNPC = nil
             local closestNPCDistance = range + 1 
             for _, player in ipairs(targets) do
@@ -115,7 +127,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
             currentPhase = 3
-           world:RemoveEvents()
             burstRan = false
         end
         print("CURRENT PHASE 2")

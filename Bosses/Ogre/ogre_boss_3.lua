@@ -62,6 +62,18 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     --Shattering Strikes
     if currentPhase == 1 then
         local function ShatteringStrikes(eventid, delay, repeats, worldobject)
@@ -95,7 +107,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         burstRan = true
     end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-           world:RemoveEvents()
             currentPhase = 2
             burstRan = false
         end
@@ -163,7 +174,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = true
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-           world:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -198,9 +208,12 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
         end
-        world:RegisterEvent(Minions, {3500, 4000}, 1)
+        if burstRan == false then
+            world:RegisterEvent(Minions, {3500, 4000}, 1)
+            burstRan = true
+        end
+
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-           world:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
@@ -225,7 +238,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:CastSpell(closestNPC, 41924, true)
         end
-        world:RegisterEvent(EnragedRampage, {1500, 3000}, 1)
+        if burstRan == false then
+            world:RegisterEvent(EnragedRampage, {1500, 3000}, 1)
+            burstRan = true
+        end
+
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 5
             burstRan = false

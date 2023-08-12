@@ -1,5 +1,4 @@
-
- local RichardHeart = {}
+local RichardHeart = {}
 
 local currentPhase = 1
 
@@ -10,12 +9,13 @@ function RichardHeart.OnSpawn(event, creature)
     creature:CanFly(true)
     creature:SetDisableGravity(true)
 end
+
 function Strike(eventId, dely, calls, creature)
     creature:CastSpell(creature:GetVictim(), 62444, true)
 end
 
 function RichardHeart.OnEnterCombat(event, creature, target)
-   local range = 40 
+    local range = 40
     local targets = creature:GetPlayersInRange(range)
     local closestPlayer = nil
     local closestDistance = range + 1
@@ -34,7 +34,7 @@ function RichardHeart.OnLeaveCombat(event, creature, world)
     local yellOptions = "Hehehe..."
     creature:PlayDirectSound(14973)
     creature:SendUnitYell(yellOptions, 0)
-    local range = 40 
+    local range = 40
     local targets = creature:GetPlayersInRange(range)
     local closestPlayer = nil
     local closestDistance = range + 1
@@ -51,23 +51,35 @@ end
 function RichardHeart.OnDied(event, creature, killer)
     creature:SendUnitYell("Agh! Ugh.....OOhha..", 0)
     creature:PlayDirectSound(17374)
-    if(killer:GetObjectType() == "Player") then
-        killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
+    if (killer:GetObjectType() == "Player") then
+        killer:SendBroadcastMessage("You killed " .. creature:GetName() .. "!")
     end
-   creature:RemoveEvents()
+    creature:RemoveEvents()
     currentPhase = 1
 end
 
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     -- The Ogre Awakens
     if currentPhase == 1 then
         local function Awaken(eventid, delay, repeats, worldobject)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200012)
             local closestNPC = nil
-            local closestDistance = range + 1 
+            local closestDistance = range + 1
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestDistance then
@@ -78,12 +90,11 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:SendUnitYell("Ogre 1 Awakens!", 0)
             closestNPC:PerformEmote(53)
         end
-    if burstRan == false then
-        world:RegisterEvent(Awaken, 3000, 1)
-        burstRan = true
-    end
+        if burstRan == false then
+            world:RegisterEvent(Awaken, 3000, 1)
+            burstRan = true
+        end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-          -- world:RemoveEvents()
             currentPhase = 2
             burstRan = false
         end
@@ -94,7 +105,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200012)
             local closestNPC = nil
-            local closestDistance = range + 1 
+            local closestDistance = range + 1
 
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
@@ -119,7 +130,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            local npcRange = 100 
+            local npcRange = 100
             local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200012)
             local closestNPC = nil
             local closestNPCDistance = npcRange + 1
@@ -143,7 +154,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             burstRan = true
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-         --  world:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -152,10 +162,10 @@ function RichardHeart.CheckHealth(event, creature, world)
     -- Reinforcments Arrive
     if currentPhase == 3 then
         function Minions(eventid, delay, repeats, worldobject)
-            local range = 100 
+            local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200012)
             local closestNPC = nil
-            local closestNPCDistance = range + 1 
+            local closestNPCDistance = range + 1
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestNPCDistance then
@@ -172,7 +182,8 @@ function RichardHeart.CheckHealth(event, creature, world)
                 local addsCount = math.random(2, 3)
                 for i = 1, addsCount do
                     local randomPlayer = players[math.random(1, #players)]
-                    local add = closestNPC:SpawnCreature(33966, closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), closestNPC:GetO(), 2, 0)
+                    local add = closestNPC:SpawnCreature(33966, closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(),
+                        closestNPC:GetO(), 2, 0)
                     add:AttackStart(randomPlayer)
                 end
             end
@@ -189,10 +200,13 @@ function RichardHeart.CheckHealth(event, creature, world)
             end
             closestNPC:AttackStart(closestPlayer)
         end
-        world:RegisterEvent(Minions, {3500, 4000}, 1)
-        
+        if burstRan == false then
+            world:RegisterEvent(Minions, { 3500, 4000 }, 1)
+            burstRan = true
+        end
+
+
         if creature:HealthBelowPct(40) and creature:HealthAbovePct(21) then
-           world:RemoveEvents()
             currentPhase = 4
             burstRan = false
         end
@@ -201,10 +215,10 @@ function RichardHeart.CheckHealth(event, creature, world)
     -- Enraged Rampage
     if currentPhase == 4 then
         function EnragedRampage(eventid, delay, repeats, worldobject)
-            local range = 100 
+            local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200012)
             local closestNPC = nil
-            local closestNPCDistance = range + 1 
+            local closestNPCDistance = range + 1
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestNPCDistance then
@@ -230,9 +244,12 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:AttackStart(closestPlayer)
             closestNPC:CastSpell(closestNPC:GetVictim(), 62444, true)
         end
-        world:RegisterEvent(EnragedRampage, 1000, 0)
+        if burstRan == false then
+            world:RegisterEvent(EnragedRampage, 1000, 0)
+            burstRan = true
+        end
+
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
-           world:RemoveEvents()
             currentPhase = 5
             burstRan = false
         end
@@ -241,10 +258,10 @@ function RichardHeart.CheckHealth(event, creature, world)
     -- Last Stand
     if currentPhase == 5 then
         function LastStand(eventid, delay, repeats, worldobject)
-            local range = 100 
+            local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200012)
             local closestNPC = nil
-            local closestNPCDistance = range + 1 
+            local closestNPCDistance = range + 1
             for _, player in ipairs(targets) do
                 local distance = worldobject:GetDistance(player)
                 if distance < closestNPCDistance then
@@ -271,11 +288,14 @@ function RichardHeart.CheckHealth(event, creature, world)
             closestNPC:CastSpell(closestNPC:GetVictim(), 62444, true)
             closestNPC:CastSpell(closestNPC, 41924, true)
         end
-        world:RegisterEvent(LastStand, 1000, 0)
+        if burstRan == false then
+            world:RegisterEvent(LastStand, 1000, 0)
+            burstRan = true
+        end
         if creature:HealthBelowPct(5) then
             currentPhase = 5
             burstRan = false
-           world:RemoveEvents()
+            world:RemoveEvents()
         end
         print("CURRENT PHASE 5")
     end

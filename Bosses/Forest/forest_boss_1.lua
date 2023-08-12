@@ -37,6 +37,18 @@ end
 local burstRan = false
 
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 
     if currentPhase == 1 then
         local function Move(eventid, delay, repeats, worldobject)

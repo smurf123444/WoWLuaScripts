@@ -53,6 +53,18 @@ end
 
 local burstRan = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     -- MAGMA BURST
     if currentPhase == 1 then
         local function Burst(eventid, delay, repeats, worldobject)
@@ -74,12 +86,11 @@ function RichardHeart.CheckHealth(event, creature, world)
         end
         if burstRan == false then
             creature:SendUnitYell("Prepare for DOOM! (7 sec)",0)
-
             world:RegisterEvent(Burst, 7000, 1)
             burstRan = true
         end
         if creature:HealthBelowPct(80) and creature:HealthAbovePct(61) then
-           world:RemoveEvents()
+            burstRan = false
             currentPhase = 2
         end
     end
@@ -130,7 +141,6 @@ function RichardHeart.CheckHealth(event, creature, world)
             creature:CanAggro()
         end
         if creature:HealthBelowPct(60) and creature:HealthAbovePct(41) then
-           world:RemoveEvents()
             currentPhase = 3
             burstRan = false
         end
@@ -150,7 +160,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             creature:MoveChase(randomPlayer)
             creature:CanAggro()
         end
-        creature:CastSpellAoF(creature:GetX(), creature:GetY(), creature:GetZ(), 62400, true)
+     --   creature:CastSpellAoF(creature:GetX(), creature:GetY(), creature:GetZ(), 62400, true)
         function Lava(eventid, delay, repeats, worldobject)
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200004)
@@ -182,7 +192,6 @@ function RichardHeart.CheckHealth(event, creature, world)
         if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
             currentPhase = 4
             burstRan = false
-           world:RemoveEvents()
         end
         print("CURRENT PHASE 3")
     end
@@ -191,6 +200,52 @@ function RichardHeart.CheckHealth(event, creature, world)
         -- Blazing Fury Phase
        -- creature:CastSpell(creature:GetVictim(),SPELLS[currentPhase], creature) -- Activate boss's blazing fury
         -- Adjust boss's attacks to deal additional fire damage
+        local range = 40
+        local targets = creature:GetPlayersInRange(range)
+        local randomPlayer = nil
+        if #targets > 0 then
+            local randomIndex = math.random(1, #targets)
+            randomPlayer = targets[randomIndex]
+        end
+        do
+            creature:AttackStart(randomPlayer)
+            creature:MoveChase(randomPlayer)
+            creature:CanAggro()
+        end
+        function Transform(eventid, delay, repeats, worldobject)
+            local range = 100 
+            local targets = worldobject:GetCreaturesInRange(range, 200004)
+            local closestNPC = nil
+            local closestNPCDistance = range + 1 
+            for _, player in ipairs(targets) do
+                local distance = worldobject:GetDistance(player)
+                if distance < closestNPCDistance then
+                    closestNPC = player
+                    closestNPCDistance = distance
+                end
+            end
+            if closestNPC == nil then
+                return
+            end
+            local vinesCount = math.random(4, 6)
+            for i = 1, vinesCount do
+                local vineX = closestNPC:GetX() + math.random(-5, 5)
+                local vineY = closestNPC:GetY() + math.random(-5, 5)
+                local vineZ = closestNPC:GetZ()
+                local vine = closestNPC:SummonGameObject(194952, vineX, vineY, vineZ, closestNPC:GetO(), 0, 0, 0, 0)
+                vine:SetPhaseMask(1)
+            end
+        end
+        if burstRan == false then
+            world:RegisterEvent(Transform, {3000, 6000}, 1)
+            burstRan = true
+        end
+        if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
+            currentPhase = 5
+            burstRan = false
+           world:RemoveEvents()
+        end
+        print("CURRENT PHASE 3")
     end
 end
 

@@ -35,6 +35,18 @@ end
 
 local burstRan = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
 
     if currentPhase == 1 then
         local function SpawnAdds(eventid, delay, repeats, worldobject)
@@ -46,7 +58,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     randomPlayer = targets[randomIndex] 
                 end
                 local range = 100
-                local targets = worldobject:GetCreaturesInRange(range, 200010)
+                local targets = worldobject:GetCreaturesInRange(range, 200008)
                 local closestNPC = nil
                 local closestNPCDistance = range + 1 
                 for _, player in ipairs(targets) do
@@ -214,6 +226,11 @@ function RichardHeart.CheckHealth(event, creature, world)
            world:RemoveEvents()
         end
         print("CURRENT PHASE 4")
+        if creature:HealthBelowPct(20) and creature:HealthAbovePct(5) then
+            currentPhase = 5
+            world:RemoveEvents()
+            burstRan = false
+        end
     end
 end
 

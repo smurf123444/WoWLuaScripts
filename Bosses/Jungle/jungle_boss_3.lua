@@ -49,11 +49,23 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     if currentPhase == 1 then
 
         local function Adds(eventid, delay, repeats, worldobject)
             local npcRange = 100 
-            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200005)
+            local npcTargets = worldobject:GetCreaturesInRange(npcRange, 200003)
             local closestNPC = nil
             local closestNPCDistance = npcRange + 1 
             for _, npc in ipairs(npcTargets) do
@@ -63,7 +75,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            local players = creature:GetPlayersInRange(30)
+            local players = closestNPC:GetPlayersInRange(30)
             if not hasSummonWormExecuted then
                 hasSummonWormExecuted = true
                 local addsCount = math.random(1, 1)
@@ -206,13 +218,6 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            local range = 40
-            local targets = worldobject:GetPlayersInRange(range)
-            local randomPlayer = nil
-            if #targets > 0 then
-                local randomIndex = math.random(1, #targets)
-                randomPlayer = targets[randomIndex] 
-            end
             local players = closestNPC:GetPlayersInRange(30)
             if not hasSummonWormExecuted then
                 hasSummonWormExecuted = true
@@ -234,6 +239,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             currentPhase = 5
            world:RemoveEvents()
             burstRan = false
+            hasSummonWormExecuted = false
         end
         print("CURRENT PHASE 4")
     end

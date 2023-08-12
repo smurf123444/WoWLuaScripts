@@ -60,6 +60,18 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     --Orbs of Celesial: Boss Heal
     if currentPhase == 1 then
         local function OrbsOfCelesial(eventid, delay, repeats, worldobject)
@@ -113,7 +125,6 @@ function RichardHeart.CheckHealth(event, creature, world)
                 end
             end
             closestNPC:CastSpell(closestNPC, 58984, true)
-           -- closestNPC:CastSpellAoF(closestNPC:GetX(), closestNPC:GetY(), closestNPC:GetZ(), 61882, true)
         end
         local function Attack(eventid, delay, repeats, worldobject)
             local range = 100

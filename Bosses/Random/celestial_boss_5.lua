@@ -60,21 +60,21 @@ end
 local burstRan = false
 local hasSummonWormExecuted = false
 function RichardHeart.CheckHealth(event, creature, world)
+    local range = 40 
+    local targets = creature:GetPlayersInRange(range)
+    local closestPlayer = nil
+    local closestDistance = range + 1
+    for _, player in ipairs(targets) do
+        local distance = creature:GetDistance(player)
+        if (distance < closestDistance) then
+            closestPlayer = player
+            closestDistance = distance
+        end
+    end
+    creature:AttackStart(closestPlayer)
     --Starfall AoE
     if currentPhase == 1 then
         local function Starfall(eventid, delay, repeats, worldobject)
-            local range = 100
-            local targets = worldobject:GetPlayersInRange(range)
-            local closestPlayer = nil
-            local closestDistance = range + 1
-
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestDistance then
-                    closestPlayer = player
-                    closestDistance = distance
-                end
-            end
             local range = 100
             local targets = worldobject:GetCreaturesInRange(range, 200023)
             local closestNPC = nil
@@ -166,18 +166,6 @@ function RichardHeart.CheckHealth(event, creature, world)
     --Void Infusion Defence
     if currentPhase == 3 then
         function MentalCollapse(eventid, delay, repeats, worldobject)
-            local range = 100
-            local targets = worldobject:GetPlayersInRange(range)
-            local closestPlayer = nil
-            local closestDistance = range + 1
-
-            for _, player in ipairs(targets) do
-                local distance = worldobject:GetDistance(player)
-                if distance < closestDistance then
-                    closestPlayer = player
-                    closestDistance = distance
-                end
-            end
             local range = 100 
             local targets = worldobject:GetCreaturesInRange(range, 200023)
             local closestNPC = nil
