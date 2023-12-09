@@ -13,9 +13,9 @@ local DEADMINES_NPC_LIST = {
 }
 
 local TIME_TIERS = {
-    PLATINUM = 1200, -- Assuming 1200 seconds for PLATINUM tier
-    GOLD = 1800,    -- 1800 seconds for GOLD tier
-    SILVER = 2400,  -- 2400 seconds for SILVER tier
+    PLATINUM = 12000, -- Assuming 1200 seconds for PLATINUM tier
+    GOLD = 18000,    -- 1800 seconds for GOLD tier
+    SILVER = 24000,  -- 2400 seconds for SILVER tier
     BRONZE = 3000   -- 3000 seconds for BRONZE tier
 }
 
@@ -409,83 +409,19 @@ end
 
 local MYTHIC_TABLE = CreateMythicTable()
 
-
-
 -- Update player's mythic level based on the keystone in their bag
 local function SetMythicLevelFromItem(player)
-    local mythic_keystone_1_count = player:GetItemCount(90001)
-    local mythic_keystone_2_count = player:GetItemCount(90002)
-    local mythic_keystone_3_count = player:GetItemCount(90003)
-    local mythic_keystone_4_count = player:GetItemCount(90004)
-    local mythic_keystone_5_count = player:GetItemCount(90005)
-    local mythic_keystone_6_count = player:GetItemCount(90006)
-    local mythic_keystone_7_count = player:GetItemCount(90007)
-    local mythic_keystone_8_count = player:GetItemCount(90008)
-    local mythic_keystone_9_count = player:GetItemCount(90009)
-    local mythic_keystone_10_count = player:GetItemCount(90010)
-    local playerGUID = player:GetGUIDLow()
-    print("Checking mythic_keystone_1_count: " , mythic_keystone_1_count)
-    print("Checking mythic_keystone_2_count: " , mythic_keystone_2_count)
-    print("Checking mythic_keystone_3_count: " , mythic_keystone_3_count)
-    print("Checking mythic_keystone_4_count: " , mythic_keystone_4_count)
-    print("Checking mythic_keystone_5_count: " , mythic_keystone_5_count)
-    print("Checking mythic_keystone_6_count: " , mythic_keystone_6_count)
-    print("Checking mythic_keystone_7_count: " , mythic_keystone_7_count)
-    print("Checking mythic_keystone_8_count: " , mythic_keystone_8_count)
-    print("Checking mythic_keystone_9_count: " , mythic_keystone_9_count)
-    print("Checking mythic_keystone_10_count: " , mythic_keystone_10_count)
-    if mythic_keystone_1_count > 0 then
-        player:SetData("DEADMINES_MYTHIC_LEVEL", 1) -- Set to the index
-        player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (1) .. ".")
-                return
-        end
-    if mythic_keystone_2_count > 0 then
-            player:SetData("DEADMINES_MYTHIC_LEVEL", 2) -- Set to the index
-            player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (2) .. ".")
+    for i = 1, 30 do
+        local mythic_keystone_count = player:GetItemCount(90000 + i)
+        if mythic_keystone_count > 0 then
+            player:SetData("DEADMINES_MYTHIC_LEVEL", i) -- Set to the index
+            player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. i .. ".")
             return
-    end
-    if mythic_keystone_3_count > 0 then
-        player:SetData("DEADMINES_MYTHIC_LEVEL", 3) -- Set to the index
-        player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (3) .. ".")
-                return
         end
-    if mythic_keystone_4_count > 0 then
-             player:SetData("DEADMINES_MYTHIC_LEVEL", 4) -- Set to the index
-            player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (4) .. ".")
-            return
-    end
-    if mythic_keystone_5_count > 0 then
-        player:SetData("DEADMINES_MYTHIC_LEVEL", 5) -- Set to the index
-        player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (5) .. ".")
-                return
-        end
-    if mythic_keystone_6_count > 0 then
-            player:SetData("DEADMINES_MYTHIC_LEVEL", 6) -- Set to the index
-            player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (6) .. ".")
-            return
-    end
-    if mythic_keystone_7_count > 0 then
-        player:SetData("DEADMINES_MYTHIC_LEVEL", 7) -- Set to the index
-        player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (7) .. ".")
-                return
-        end
-    if mythic_keystone_8_count > 0 then
-            player:SetData("DEADMINES_MYTHIC_LEVEL", 8) -- Set to the index
-            player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (8) .. ".")
-            return
-    end
-    if mythic_keystone_9_count > 0 then
-        player:SetData("DEADMINES_MYTHIC_LEVEL", 9) -- Set to the index
-        player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (9) .. ".")
-                return
-        end
-    if mythic_keystone_10_count > 0 then
-            player:SetData("DEADMINES_MYTHIC_LEVEL", 10) -- Set to the index
-            player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. (10) .. ".")
-            return
     end
     player:SendBroadcastMessage("Mythic Keystone not found in your bags!")
 end
+
 
 -- Adjust NPC attributes when combat starts
 local function OnCreatureEnterCombat(event, creature, target)
@@ -657,7 +593,27 @@ local function EndDungeonTimer(creature, killer)
                         player:GetItemCount(90007),
                         player:GetItemCount(90008),
                         player:GetItemCount(90009),
-                        player:GetItemCount(90010)
+                        player:GetItemCount(90010),
+                        player:GetItemCount(90011),
+                        player:GetItemCount(90012),
+                        player:GetItemCount(90013),
+                        player:GetItemCount(90014),
+                        player:GetItemCount(90015),
+                        player:GetItemCount(90016),
+                        player:GetItemCount(90017),
+                        player:GetItemCount(90018),
+                        player:GetItemCount(90019),
+                        player:GetItemCount(90020),
+                        player:GetItemCount(90021),
+                        player:GetItemCount(90022),
+                        player:GetItemCount(90023),
+                        player:GetItemCount(90024),
+                        player:GetItemCount(90025),
+                        player:GetItemCount(90026),
+                        player:GetItemCount(90027),
+                        player:GetItemCount(90028),
+                        player:GetItemCount(90029),
+                        player:GetItemCount(90030)
                     }
             
                     for i, count in ipairs(mythicKeystoneCounts) do
