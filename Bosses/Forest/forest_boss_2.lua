@@ -149,7 +149,7 @@ function RichardHeart.CheckHealth(event, creature, world)
             print(worldobject:GetName())
             print(closestNPC)
             closestNPC:SendUnitYell("Run!!",0 )
-            closestNPC:MoveTo(1, 2355, 2206, closestNPC:GetZ())
+            closestNPC:MoveTo(1, 76, 62, closestNPC:GetZ())
         end
         local function AttackAgain(eventid, delay, repeats, worldobject)
             print("Ran TIMED 22")

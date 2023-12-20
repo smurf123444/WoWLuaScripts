@@ -12,6 +12,10 @@ function Strike(eventId, dely, calls, creature)
     creature:CastSpell(creature:GetVictim(), 62444, true)
 end
 
+function IronDwarfSpell(eventId, dely, calls, creature)
+    creature:CastSpell(creature:GetVictim(), 12058, true)
+end
+
 function RichardHeart.OnEnterCombat(event, creature, target)
     creature:SendUnitYell("Come to me... \"Pretender\". FEED MY BLADE!", 0)
     creature:PlayDirectSound(17242)
@@ -28,6 +32,7 @@ function RichardHeart.OnEnterCombat(event, creature, target)
     end
     creature:AttackStart(closestPlayer)
     creature:RegisterEvent(Strike, 3000, 0)
+    creature:RegisterEvent(IronDwarfSpell, 3000, 0)
 end
 
 function RichardHeart.OnLeaveCombat(event, creature, world)
@@ -74,7 +79,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestDistance = distance
                 end
             end
-            closestNPC:MoveTo(1, 2199, 2320, 25)
+            closestNPC:MoveTo(1, 36, 40, -144)
         end
         if burstRan == false then
             creature:SendUnitYell("Come and Catch me bitch", 0)
@@ -109,7 +114,7 @@ function RichardHeart.CheckHealth(event, creature, world)
                     closestNPCDistance = distance
                 end
             end
-            closestNPC:MoveTo(1, 2205, 2329, 25)
+            closestNPC:MoveTo(1, 51, 48, -144)
         end
 
         if burstRan == false then
