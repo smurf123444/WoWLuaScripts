@@ -1,0 +1,78 @@
+Certainly! Let's dive into more detail on the creation of a custom skybox based on the provided tutorial:
+
+### 6. Creation of Custom Skybox:
+
+#### a. Obtain Client Coordinates:
+
+   - In a tool like Noggit, find the client coordinates of the desired location. For example, X=20540, Y=11690, Z=1600.
+
+#### b. Insert a New Row in LightParams.dbc:
+
+   - Open LightParams.dbc and add a new row (e.g., ID 954). This row will represent the settings for your custom skybox.
+
+#### c. Add a New Row in Light.dbc:
+
+   - Calculate the client-side coordinates for your skybox (multiply by 36).
+   - Determine inner and outer radius values (multiply by 36).
+   - Insert a new row in Light.dbc with the calculated values and reference the ID from LightParams.dbc (954 in this case).
+
+   Example:
+   ```
+   ID | Map ID | X | Z | Y | Inner Radius | Outer Radius | LightParams IDs...
+   954 | MapID | X*36 | Z*36 | Y*36 | 1388*36 | 1666*36 | 954 | ... | ...
+   ```
+
+#### d. Use WDBX Editor for LightIntBand.dbc:
+
+   - Open LightIntBand.dbc in WDBX Editor.
+   - Add 18 new lines starting from (954 * 18 – 17) to (954 * 18).
+   - Fill in time values for each phase (e.g., morning, day, night).
+   - Use the Color function in WDBX Editor to generate BGR codes for each phase.
+   - Repeat this process for all phases and rows.
+
+   Example:
+   ```
+   ID | Phases | Time (morning) | BGR Codes (morning) | Time (day) | BGR Codes (day) | Time (night) | BGR Codes (night)...
+   954*18-17 | 3 | 960 | BGR1 | 2280 | BGR2 | ... | ...
+   ```
+
+#### e. Edit LightFloatBand.dbc:
+
+   - Open LightFloatBand.dbc.
+   - Insert 6 new rows corresponding to the ID from LightParams.dbc (954 in this case).
+   - Set fog distance, fog density, brightness, and other values for each phase.
+
+   Example:
+   ```
+   Row ID | Phases | Time (morning) | Fog Distance | Fog Density | Brightness | Cloud Density...
+   954*6-5 | 3 | 960 | 9000 | 0.5 | 0.8 | 0.6 | ... | ...
+   ```
+
+#### f. Optional: LightSkyBox.dbc for Skybox Models:
+
+   - If you want to add a custom skybox model, open LightSkyBox.dbc.
+   - Insert a row with a unique ID and specify the path to the model.
+   - Set properties like transparency based on the requirement.
+
+   Example:
+   ```
+   ID | Model Path | Flags...
+   SkyboxID | Environments/Stars/[MODEL].mdx | 2...
+   ```
+
+#### g. Finalization:
+
+   - Save all the edited Dbc files.
+   - Place the files, along with textures (blps) and models (m2s), into the game patch.
+
+#### h. Verify In-Game:
+
+   - Launch the game and go to the specified location (Hyjal in this example).
+   - Verify that the custom skybox is working as intended.
+
+#### i. Troubleshooting and Discussion:
+
+   - If any issues arise, refer to the tutorial for troubleshooting tips.
+   - Engage with the community for discussions or assistance.
+
+This detailed breakdown should guide you through the process of creating a custom skybox in WoW [3.3.5.]. Feel free to ask if you have any specific questions!
