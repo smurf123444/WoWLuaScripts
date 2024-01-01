@@ -1,6 +1,11 @@
 -- Event handler for player death
 local function onPlayerDeath(event, player, unit)
-    local gameObj = player:SummonGameObject(510001, 2475, 2342, 50, 4)
+   local posX, posY, posZ, orientation = player:GetLocation()
+	print(posX, posY, posZ, orientation)
+    -- Summon a game object near the player's corpse location
+    local gameObj = player:SummonGameObject(510001, posX, posY, posZ, orientation)
+
+    
     local menu = {}
 
       for bag = 0, 255 do
