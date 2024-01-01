@@ -480,33 +480,6 @@ local function StartDungeonTimer(player)
     player:SendBroadcastMessage("The timer for the dungeon has started!")
 end
 
--- This function checks if a player has already received a weekly reward
-local function HasReceivedWeeklyReward(player)
-    print("HasReceivedWeeklyReward")
-    local result = CharDBQuery("SELECT highest_level FROM mythic_weekly_progress WHERE player_id = " ..
-        player:GetGUIDLow() .. " AND YEARWEEK(week_start_date, 1) = YEARWEEK(CURDATE(), 1)")
-
-    if result then
-        local lastRewardedLevel = result:GetUInt32(0)
-        print("HasReceivedWeeklyReward LAST REWARD LEVEL var: ", lastRewardedLevel)
-        return true, lastRewardedLevel
-    else
-        -- If no result, insert an empty table for the player
-        CharDBExecute("INSERT IGNORE INTO mythic_weekly_progress (player_id, highest_level, week_start_date) VALUES (" ..
-            player:GetGUIDLow() .. ", 0, CURDATE())")
-        
-        -- Retrieve the newly inserted or existing entry
-        local newResult = CharDBQuery("SELECT highest_level FROM mythic_weekly_progress WHERE player_id = " ..
-            player:GetGUIDLow() .. " AND YEARWEEK(week_start_date, 1) = YEARWEEK(CURDATE(), 1)")
-
-        if newResult then
-            local lastRewardedLevel = newResult:GetUInt32(0)
-            return false, lastRewardedLevel -- Return true with the lastRewardedLevel
-        end
-    end
-    return false, 1
-end
-
 
 
 local function SetReceivedWeeklyReward(player, rewardID, mythicLevel, startTime)
