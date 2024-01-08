@@ -405,6 +405,7 @@ local function OnPlayerDeath(event, player)
     print("OnPlayerDeath")
     local penalty = 5
     local existingPenalty = player:GetData("DeathPenalty") or 0
+   
     player:SetData("DeathPenalty", existingPenalty + penalty)
     player:SendBroadcastMessage(string.format("5 seconds penalty added. Total penalty: %d seconds.",
         player:GetData("DeathPenalty")))
@@ -530,12 +531,12 @@ local function EndDungeonTimer(creature, killer)
                 player:SendBroadcastMessage("You have already completed this dungeon run and received your rewards.")
                 return  -- Exit if the dungeon run has already been completed
             end
-
-            
+        
+        
             player:SetData("DungeonEndTime", os.time())
             local deathPenalty = player:GetData("DeathPenalty") or 0
             local elapsedTime = (os.time() - startTime) + deathPenalty  -- Calculate elapsed time
-            
+            print("EXISTING PENALTY" .. deathPenalty)
             -- Determine the tier based on elapsed time
             local tier = nil
             for tierName, timeLimit in pairs(TIME_TIERS) do
@@ -547,13 +548,6 @@ local function EndDungeonTimer(creature, killer)
                     break  -- Exit the loop once we find the tier that fits the elapsed time
                 end
             end
-            
-            
-        --[[     print("Death Penalty: " .. deathPenalty)
-            print("Start Time: " .. startTime)
-            print("Elapsed Time: " .. elapsedTime)
-            print("End Time: " .. player:GetData("DungeonEndTime"))
-            print("Tier: " .. tier) ]]
 
             local playerClass = GetPlayerClass(player)
             local award = GetRewardForClass(playerClass, tier, playerMythicLevel)
@@ -609,7 +603,7 @@ local function EndDungeonTimer(creature, killer)
                     for i, count in ipairs(mythicKeystoneCounts) do
                         if count > 0 then
                             player:RemoveItem(90000 + i, 1)
-                            player:AddItem(MYTHIC_KEYSTONE_ENTRIES[newKeyLevel], 1)
+                            player:AddItem(MYTHIC_KEYSTONE_ENTRIES[math.min(30, newKeyLevel + 1)], 1)
                             player:SetData("DEADMINES_MYTHIC_LEVEL", newKeyLevel  + 1)
                             UpdatePlayerMythicLevelInSQL(player, newKeyLevel + 1)
                             player:SendBroadcastMessage("Your Mythic Keystone has been upgraded to level " .. newKeyLevel )
@@ -631,15 +625,13 @@ local function EndDungeonTimer(creature, killer)
                 player:SendBroadcastMessage("Your Mythic Level has been decreased to " .. playerMythicLevel .. ".")
             end
 
-
-
             if newKeyLevel > playerMythicLevel then
                 for bag = 0, MAX_BAG or 4 do
                     for slot = 0, MAX_SLOT or 32 do
                         local item = player:GetItemByPos(bag, slot)
                         if item and item:GetEntry() == MYTHIC_KEYSTONE_ENTRIES[playerMythicLevel] then
                             player:RemoveItem(item, 1)
-                            player:AddItem(MYTHIC_KEYSTONE_ENTRIES[newKeyLevel], 1)
+                            player:AddItem(MYTHIC_KEYSTONE_ENTRIES[math.min(30, newKeyLevel + 1)], 1)
                             player:SetData("DEADMINES_MYTHIC_LEVEL", newKeyLevel)
                             UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
                             player:SendBroadcastMessage("Your Mythic Keystone has been upgraded to level " .. newKeyLevel)
@@ -649,8 +641,6 @@ local function EndDungeonTimer(creature, killer)
                 end
             end
 
-            -- Reset the timer
-
         end)
         player:SetData("DungeonStartTime", nil)
         player:SetData("DungeonEndTime", nil)
@@ -659,7 +649,6 @@ local function EndDungeonTimer(creature, killer)
         end
     end
 end
-
 
 local function OnFinalBossDeath(event, creature, killer)
     print("OnFinalBossDeath")
