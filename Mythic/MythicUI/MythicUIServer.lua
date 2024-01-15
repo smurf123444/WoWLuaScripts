@@ -8,7 +8,7 @@ local function AddPlayerStats(msg, player)
 
     if result then
         local items = {
-            {name = "Mythic Level", levelIndex = 1, weekStartDateIndex=2,rewardDate=3,lastRewardID=4, timer=5},
+            {name = "Mythic Level", levelIndex = 1, weekStartDateIndex=2,rewardDate=3,lastRewardID=4},
         }
 
         for i, skill in ipairs(items) do
@@ -16,7 +16,6 @@ local function AddPlayerStats(msg, player)
             local week = result:GetString(skill.weekStartDateIndex)
             local rewardDate = result:GetString(skill.rewardDate)
             local lastRewardID = result:GetString(skill.lastRewardID)
-            local startTime = result:GetUInt32(skill.timer)
 
  --[[            local endTime = player:GetData("DungeonEndTime") ]]
       
@@ -25,7 +24,6 @@ local function AddPlayerStats(msg, player)
             statsTextLevel1 = statsTextLevel1 ..  " Week Start Date: " .. week .. "\n\n"
             statsTextLevel1 = statsTextLevel1 ..  " Last Reward Date: " .. rewardDate .. "\n\n"
             statsTextLevel1 = statsTextLevel1 ..  " Last Reward ID: " .. lastRewardID .. "\n\n"
-            statsTextLevel1 = statsTextLevel1 ..  " Start Time: " .. startTime .. "\n\n"
         
 --[[             print("Level: "..level)
             print("Week: "..week)

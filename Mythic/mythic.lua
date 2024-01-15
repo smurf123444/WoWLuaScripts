@@ -5,7 +5,7 @@ local BUFFS = {
     [2] = 20217,
 }
 
-local DUNGEON_MAP_ID = 1581 -- Replace with the ID of your dungeon map
+local DUNGEON_MAP_ID = 36
 
 local DEADMINES_NPC_LIST = {
     639,
@@ -137,27 +137,13 @@ local function OnCreatureEnterCombat(event, creature, target)
     end
 end
 
-local function StartDungeonTimer(player)
-    print("StartDungeonTimer")
-    local existingStartTime = player:GetData("DungeonStartTime")
-    if existingStartTime then
-        player:SendBroadcastMessage("Dungeon timer is already running!")
-        return
-    end
 
-    CharDBExecute("UPDATE mythic_weekly_progress SET timer = " ..
-        os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
-
-    player:SetData("DungeonStartTime", os.time(os.date("!*t")))
-
-    player:SendBroadcastMessage("The timer for the dungeon has started!")
-end
 
 local function SetReceivedWeeklyReward(player, rewardID, mythicLevel)
     print("SetReceivedWeeklyReward")
     local now = os.time(os.date("!*t"))
     CharDBExecute(
-        "INSERT INTO mythic_weekly_progress (player_id, highest_level, week_start_date, reward_date, reward_id) VALUES (" .. player:GetGUIDLow() ..", " ..mythicLevel ..", '" ..now .."', CURDATE(), " ..rewardID ..") ON DUPLICATE KEY UPDATE reward_id = " ..rewardID ..", reward_date = " .. os.time(os.date("!*t")) .. ", highest_level = GREATEST(highest_level, " .. mythicLevel .. ")")
+        "INSERT INTO mythic_weekly_progress (player_id, highest_level, week_start_date, reward_id) VALUES (" .. player:GetGUIDLow() ..", " ..mythicLevel ..", CURDATE(), " ..rewardID ..") ON DUPLICATE KEY UPDATE reward_id = " ..rewardID ..", highest_level = GREATEST(highest_level, " .. mythicLevel .. ")")
 end
 
 local function UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
@@ -178,28 +164,21 @@ local function EndDungeonTimer(creature, killer)
 
     for _, player in ipairs(players) do
         local success, message = pcall(function()
-
-            player:SetData("DungeonEndTime", os.time(os.date("!*t")))
-
             local playerMythicLevel = player:GetData("DEADMINES_MYTHIC_LEVEL")
 
-            local query = CharDBExecute("SELECT highest_level, week_start_date, reward_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
+            local query = CharDBQuery("SELECT highest_level, week_start_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
             local highest_level = query:GetUInt32(0)
             local start_time = query:GetUInt32(1)
-            local reward_date = query:GetUInt32(2)
 
             if query then
-                if not reward_date or reward_date then
-                    CharDBExecute("UPDATE mythic_weekly_progress SET reward_date = " ..
-                    os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
-                end
 
             if playerMythicLevel <= highest_level then
-                    player:SendBroadcastMessage("You have already completed this dungeon run and received your rewards.")
+                    player:SendBroadcastMessage("You have already completed this dungeon run and received your rewards for this level. Error.")
                     return
                 end
             else
                 print("Error executing the query")
+                return
             end
          
             local deathPenalty = player:GetData("DeathPenalty") or 0
@@ -245,7 +224,7 @@ local function EndDungeonTimer(creature, killer)
                         local newKeystoneEntry = MYTHIC_KEYSTONE_ENTRIES[math.min(30, newKeyLevel + 1)]
                         player:AddItem(newKeystoneEntry, 1)
                         player:SetData("DEADMINES_MYTHIC_LEVEL", newKeyLevel + 1)
-                        UpdatePlayerMythicLevelInSQL(player, newKeyLevel + 1)
+                        UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
                         player:SendBroadcastMessage("Your Mythic Keystone has been upgraded to level " .. newKeyLevel)
                     end
                 end
@@ -281,9 +260,6 @@ local function EndDungeonTimer(creature, killer)
                 end
             end
         end)
-
-        player:SetData("DungeonStartTime", nil)
-        player:SetData("DungeonEndTime", nil)
         if not success and message then
             print("Error processing EndDungeonTimer for player " .. player:GetName() .. ": " .. message)
         end
@@ -298,38 +274,30 @@ end
 function CheckArea(event, player, newArea)
     print("CheckArea")
 
-    local query = CharDBQuery("SELECT week_start_date, reward_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
-    local start_date = 0
-    local reward_date = 0
-
-    if query then
-        start_date = query:GetUInt32(0)
-        reward_date = query:GetUInt32(1)
-        print("reward_date: " .. reward_date)
-        print("start_date + 7 DAYS: " .. start_date + 604800)
-    else
-        print("Error executing the query")
-    end
-
-    if start_date == 0 or start_date > reward_date + 604800 then
-        player:SendBroadcastMessage("New Week Started, Enjoy the dungeon!")
-        CharDBExecute("UPDATE mythic_weekly_progress SET week_start_date = " ..
-            os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
-    else
-        player:SendBroadcastMessage("Already Started for the week, come back next week")
-        return
-    end
-
-    if player:GetMapId() == newArea then
-        if not player:GetData("EnteredDungeon") then
-            player:SetData("EnteredDungeon", true)
-            StartDungeonTimer(player)
-            SetMythicLevelFromItem(player)
+    if DUNGEON_MAP_ID == player:GetMapId() then
+        local start_date = 0
+        local query = CharDBQuery("SELECT week_start_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
+        if query then
+            start_date = query:GetUInt32(0)
+            print("now: " ..  os.time(os.date("!*t")))
+            print("start_date: " .. start_date )
+            print("start_date + 7 DAYS: " .. start_date + 604800)
+            print( "start_date + 604800 < os.time(os.date(!*t)): ")
+            print( start_date + 604800 < os.time(os.date("!*t")))
+        else
+            print("Error executing the query")
+        end
+        if start_date == 0 or start_date + 604800 < os.time(os.date("!*t"))  then
+            player:SendBroadcastMessage("New Week Started, Enjoy the dungeon!")
+            CharDBExecute("UPDATE mythic_weekly_progress SET week_start_date = " ..
+                os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
+                SetMythicLevelFromItem(player)
+        else
+            player:SendBroadcastMessage("Already Started for the week, come back next week")
+            return
         end
     else
-        player:SetData("DungeonStartTime", nil)
-        player:SetData("DungeonEndTime", nil)
-        player:SetData("EnteredDungeon", false)
+        return
     end
 end
 
