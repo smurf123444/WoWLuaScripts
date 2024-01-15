@@ -8,38 +8,26 @@ local function AddPlayerStats(msg, player)
 
     if result then
         local items = {
-            {name = "Mythic Level", levelIndex = 1, weekStartDateIndex=2,rewardDate=3,lastRewardID=4},
+            {name = "Last Mythic Level", levelIndex = 1, weekStartDateIndex=2,lastRewardID=3,},
         }
 
-        for i, skill in ipairs(items) do
-            local level = result:GetUInt32(skill.levelIndex)
-            local week = result:GetString(skill.weekStartDateIndex)
-            local rewardDate = result:GetString(skill.rewardDate)
-            local lastRewardID = result:GetString(skill.lastRewardID)
+        for i, level in ipairs(items) do
+            local level = result:GetUInt32(level.levelIndex)
+            local week = result:GetString(level.weekStartDateIndex)
+            local lastRewardID = result:GetString(level.lastRewardID)
+            local elapsedTime = (os.time(os.date("!*t")) - week)
 
- --[[            local endTime = player:GetData("DungeonEndTime") ]]
-      
-
-            statsTextLevel1 = statsTextLevel1 .. skill.name .. ": " .. level .. "\n\n"
+            statsTextLevel1 = statsTextLevel1 .. level.name .. " completed: " .. level .. "\n\n"
             statsTextLevel1 = statsTextLevel1 ..  " Week Start Date: " .. week .. "\n\n"
-            statsTextLevel1 = statsTextLevel1 ..  " Last Reward Date: " .. rewardDate .. "\n\n"
             statsTextLevel1 = statsTextLevel1 ..  " Last Reward ID: " .. lastRewardID .. "\n\n"
-        
---[[             print("Level: "..level)
-            print("Week: "..week)
-            print("rewardDate: "..rewardDate)
-            print("lastRewardID: "..lastRewardID) ]]
+            statsTextLevel1 = statsTextLevel1 ..  " Elapsed Time: " .. elapsedTime .. "\n\n"
+
         end
     end
-    
     return msg:Add("MythicUI", "SetText1", statsTextLevel1)
 end
 
 AIO.AddOnInit(AddPlayerStats)
-local function UpdatePlayerStats(player)
-    AddPlayerStats(AIO.Msg(), player):Send(player)
-end
-
 
 for k,v in ipairs(GetPlayersInWorld()) do
     OnLogin(3, v)
@@ -47,20 +35,9 @@ end
 
 local function AttributesOnCommand(event, player, command)
     if(command == "para") then
-
-
         AIO.Handle(player, "MythicUI", "ShowAttributes")
         return false
     end
 end
-local function OnLogin(event, player)
-    UpdatePlayerStats(player:GetGUIDLow())
-end
-local function OnLogout(event, player)
-    UpdatePlayerStats(player:GetGUIDLow())
-end
-
-RegisterPlayerEvent(3, OnLogin)
-RegisterPlayerEvent(4, OnLogout)
 
 RegisterPlayerEvent(42, AttributesOnCommand)

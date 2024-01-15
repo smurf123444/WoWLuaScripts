@@ -14,12 +14,7 @@ local DEADMINES_NPC_LIST = {
     1729
 }
 
-local TIME_TIERS = {
-    PLATINUM = 12000, -- Time in seconds for PLATINUM tier
-    GOLD = 18000,     -- Time in seconds for GOLD tier
-    SILVER = 24000,   -- Time in seconds for SILVER tier
-    BRONZE = 30000   -- Time in seconds for BRONZE tier
-}
+
 
 local CLASS_TIER_REWARDS = require("rewardTable")
 
@@ -87,16 +82,25 @@ local MYTHIC_TABLE = CreateMythicTable()
 
 local function SetMythicLevelFromItem(player)
     print("SetMythicLevelFromItem")
+    local mythic_keystone_count = 0
+    local foundMythicKeystone = false
+
     for i = 1, 30 do
-        local mythic_keystone_count = player:GetItemCount(90000 + i)
+        mythic_keystone_count = player:GetItemCount(90000 + i)
+
         if mythic_keystone_count > 0 then
             player:SetData("DEADMINES_MYTHIC_LEVEL", i)
             player:SendBroadcastMessage("Your mythic level has been set to Mythic+" .. i .. ".")
-            return
+            foundMythicKeystone = true
+            break  -- Exit the loop once a mythic keystone is found
         end
     end
-    player:SendBroadcastMessage("Mythic Keystone not found in your bags!")
+
+    if not foundMythicKeystone then
+        player:SendBroadcastMessage("Mythic Keystone not found in your bags!")
+    end
 end
+
 
 local function OnCreatureEnterCombat(event, creature, target)
     print("OnCreatureEnterCombat")
@@ -152,11 +156,37 @@ local function UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
         newKeyLevel - 1 .. " WHERE player_id = " .. player:GetGUIDLow())
 end
 
+local function UpgradeMythicKeystone(player, currentMythicLevel, newKeyLevel)
+    local mythicKeystoneEntries = {}
+    for i = 90001, 90030 do
+        table.insert(mythicKeystoneEntries, i)
+    end
+
+    for _, keystoneEntry in ipairs(mythicKeystoneEntries) do
+        local count = player:GetItemCount(keystoneEntry)
+        if count > 0 then
+            player:RemoveItem(keystoneEntry, 1)
+            local newKeystoneEntry = MYTHIC_KEYSTONE_ENTRIES[math.min(30, newKeyLevel + 1)]
+            player:AddItem(newKeystoneEntry, 1)
+            player:SetData("DEADMINES_MYTHIC_LEVEL", newKeyLevel + 1)
+            UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
+            player:SendBroadcastMessage("Your Mythic Keystone has been upgraded to level " .. newKeyLevel)
+            break
+        end
+    end
+end
+
 local function EndDungeonTimer(creature, killer)
     print("EndDungeonTimer")
     local range = 100
     local players = creature:GetPlayersInRange(range)
-
+    local TIME_TIERS = {
+        PLATINUM = 120, -- Time in seconds for PLATINUM tier
+        GOLD = 180,     -- Time in seconds for GOLD tier
+        SILVER = 240,   -- Time in seconds for SILVER tier
+        BRONZE = 300    -- Time in seconds for BRONZE tier
+    }
+    
     if not TIME_TIERS or not CLASS_TIER_REWARDS or not MYTHIC_KEYSTONE_ENTRIES or not killer:GetData("DEADMINES_MYTHIC_LEVEL") then
         print("FAIL")
         return
@@ -167,34 +197,36 @@ local function EndDungeonTimer(creature, killer)
             local playerMythicLevel = player:GetData("DEADMINES_MYTHIC_LEVEL")
 
             local query = CharDBQuery("SELECT highest_level, week_start_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
-            local highest_level = query:GetUInt32(0)
-            local start_time = query:GetUInt32(1)
-
-            if query then
-
-            if playerMythicLevel <= highest_level then
-                    player:SendBroadcastMessage("You have already completed this dungeon run and received your rewards for this level. Error.")
-                    return
-                end
-            else
+            if not query then
                 print("Error executing the query")
                 return
             end
-         
+
+            local highest_level = query:GetUInt32(0)
+            local start_time = query:GetUInt32(1)
+
+            if playerMythicLevel <= highest_level then
+                player:SendBroadcastMessage("You have already completed this dungeon run and received your rewards for this level. Error.")
+                return
+            end
+
             local deathPenalty = player:GetData("DeathPenalty") or 0
             local elapsedTime = (os.time(os.date("!*t")) - start_time) + deathPenalty
 
+
             local tier = nil
+            
             for tierName, timeLimit in pairs(TIME_TIERS) do
                 print("timeLimit: " .. timeLimit)
                 print("tierName: " .. tierName)
                 print("elapsedTime: " .. elapsedTime)
+            
                 if elapsedTime <= timeLimit then
                     tier = tierName
                     break
                 end
             end
-
+            
             local playerClass = GetPlayerClass(player)
             local award = GetRewardForClass(playerClass, tier, playerMythicLevel)
 
@@ -207,30 +239,6 @@ local function EndDungeonTimer(creature, killer)
 
             local newKeyLevel = playerMythicLevel + (upgradeAmounts[tier] or 0)
             newKeyLevel = math.min(30, newKeyLevel)
-
-            local function TryUpgradeMythicKeystone(player, currentMythicLevel, newKeyLevel)
-                print("Mythic Keystone Replacement - Current Level: " .. currentMythicLevel)
-                print("Mythic Keystone Replacement - New Level: " .. newKeyLevel)
-            
-                local mythicKeystoneEntries = {}
-                for i = 90001, 90030 do
-                    table.insert(mythicKeystoneEntries, i)
-                end
-            
-                for _, keystoneEntry in ipairs(mythicKeystoneEntries) do
-                    local count = player:GetItemCount(keystoneEntry)
-                    if count > 0 then
-                        player:RemoveItem(keystoneEntry, 1)
-                        local newKeystoneEntry = MYTHIC_KEYSTONE_ENTRIES[math.min(30, newKeyLevel + 1)]
-                        player:AddItem(newKeystoneEntry, 1)
-                        player:SetData("DEADMINES_MYTHIC_LEVEL", newKeyLevel + 1)
-                        UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
-                        player:SendBroadcastMessage("Your Mythic Keystone has been upgraded to level " .. newKeyLevel)
-                    end
-                end
-            end            
-
-            TryUpgradeMythicKeystone(player, playerMythicLevel, newKeyLevel)
 
             if award then
                 player:AddItem(award, 1)
@@ -245,26 +253,16 @@ local function EndDungeonTimer(creature, killer)
             end
 
             if newKeyLevel > playerMythicLevel then
-                for bag = 0, MAX_BAG or 4 do
-                    for slot = 0, MAX_SLOT or 32 do
-                        local item = player:GetItemByPos(bag, slot)
-                        if item and item:GetEntry() == MYTHIC_KEYSTONE_ENTRIES[playerMythicLevel] then
-                            player:RemoveItem(item, 1)
-                            player:AddItem(MYTHIC_KEYSTONE_ENTRIES[math.min(30, newKeyLevel + 1)], 1)
-                            player:SetData("DEADMINES_MYTHIC_LEVEL", newKeyLevel)
-                            UpdatePlayerMythicLevelInSQL(player, newKeyLevel)
-                            player:SendBroadcastMessage("Your Mythic Keystone has been upgraded to level " .. newKeyLevel)
-                            break
-                        end
-                    end
-                end
+                UpgradeMythicKeystone(player, playerMythicLevel, newKeyLevel)
             end
         end)
+
         if not success and message then
             print("Error processing EndDungeonTimer for player " .. player:GetName() .. ": " .. message)
         end
     end
 end
+
 
 local function OnFinalBossDeath(event, creature, killer)
     print("OnFinalBossDeath")
@@ -291,7 +289,7 @@ function CheckArea(event, player, newArea)
             player:SendBroadcastMessage("New Week Started, Enjoy the dungeon!")
             CharDBExecute("UPDATE mythic_weekly_progress SET week_start_date = " ..
                 os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
-                SetMythicLevelFromItem(player)
+            SetMythicLevelFromItem(player)
         else
             player:SendBroadcastMessage("Already Started for the week, come back next week")
             return
