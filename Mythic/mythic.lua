@@ -5,7 +5,7 @@ local BUFFS = {
     [2] = 20217,
 }
 
-local DUNGEON_MAP_ID = 1581 -- Replace with the ID of your dungeon map
+local DUNGEON_MAP_ID = 36
 
 local DEADMINES_NPC_LIST = {
     639,
@@ -183,7 +183,7 @@ local function EndDungeonTimer(creature, killer)
 
             local playerMythicLevel = player:GetData("DEADMINES_MYTHIC_LEVEL")
 
-            local query = CharDBExecute("SELECT highest_level, week_start_date, reward_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
+            local query = CharDBQuery("SELECT highest_level, week_start_date, reward_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
             local highest_level = query:GetUInt32(0)
             local start_time = query:GetUInt32(1)
             local reward_date = query:GetUInt32(2)
@@ -298,29 +298,20 @@ end
 function CheckArea(event, player, newArea)
     print("CheckArea")
 
-    local query = CharDBQuery("SELECT week_start_date, reward_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
+    local query = CharDBQuery("SELECT week_start_date FROM mythic_weekly_progress WHERE player_id = " .. player:GetGUIDLow())
     local start_date = 0
-    local reward_date = 0
 
     if query then
         start_date = query:GetUInt32(0)
-        reward_date = query:GetUInt32(1)
-        print("reward_date: " .. reward_date)
+        print("now: " ..  os.time(os.date("!*t")))
+        print("start_date: " .. start_date )
         print("start_date + 7 DAYS: " .. start_date + 604800)
+        print( "start_date + 604800 < os.time(os.date(!*t))")
+        print( start_date + 604800 < os.time(os.date("!*t")))
     else
         print("Error executing the query")
     end
-
-    if start_date == 0 or start_date > reward_date + 604800 then
-        player:SendBroadcastMessage("New Week Started, Enjoy the dungeon!")
-        CharDBExecute("UPDATE mythic_weekly_progress SET week_start_date = " ..
-            os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
-    else
-        player:SendBroadcastMessage("Already Started for the week, come back next week")
-        return
-    end
-
-    if player:GetMapId() == newArea then
+    if DUNGEON_MAP_ID == player:GetMapId() then
         if not player:GetData("EnteredDungeon") then
             player:SetData("EnteredDungeon", true)
             StartDungeonTimer(player)
@@ -330,7 +321,18 @@ function CheckArea(event, player, newArea)
         player:SetData("DungeonStartTime", nil)
         player:SetData("DungeonEndTime", nil)
         player:SetData("EnteredDungeon", false)
+        return
     end
+    if start_date == 0 or start_date + 604800 < os.time(os.date("!*t"))  then
+        player:SendBroadcastMessage("New Week Started, Enjoy the dungeon!")
+        CharDBExecute("UPDATE mythic_weekly_progress SET week_start_date = " ..
+            os.time(os.date("!*t")) .. " WHERE player_id = " .. player:GetGUIDLow())
+    else
+        player:SendBroadcastMessage("Already Started for the week, come back next week")
+        return
+    end
+
+
 end
 
 RegisterPlayerEvent(6, OnPlayerDeath)                           -- 6 is the event code for PLAYER_EVENT_ON_DIE.\
