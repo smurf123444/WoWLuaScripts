@@ -21,7 +21,6 @@ function MyHandlers.UpdateMythicInfo(msg, player)
             statsTextLevel1 = statsTextLevel1 ..  " Week Start Date: " .. week .. "\n\n"
             statsTextLevel1 = statsTextLevel1 ..  " Last Reward ID: " .. lastRewardID .. "\n\n"
             statsTextLevel1 = statsTextLevel1 ..  " Elapsed Time: " .. elapsedTime .. "\n\n"
-
         end
     end
     return msg:Add("MYTHIC_CLIENT", "SetText1", statsTextLevel1)
@@ -34,7 +33,6 @@ end
 local function AttributesOnCommand(event, player, command)
     UpdateMythic(player)
     if(command == "para") then
-
         AIO.Handle(player, "MYTHIC_CLIENT", "ShowAttributes")
         return false
     end
