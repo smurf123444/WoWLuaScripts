@@ -25,15 +25,16 @@ DROP TABLE IF EXISTS `mythic_weekly_progress`;
 CREATE TABLE IF NOT EXISTS `mythic_weekly_progress` (
   `player_id` int NOT NULL,
   `highest_level` int NOT NULL,
-  `week_start_date` int NOT NULL DEFAULT (0),
+  `reward_date` int NOT NULL DEFAULT '0',
   `reward_id` int DEFAULT NULL,
+  `start_date` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table acore_characters.mythic_weekly_progress: ~1 rows (approximately)
-REPLACE INTO `mythic_weekly_progress` (`player_id`, `highest_level`, `week_start_date`, `reward_id`) VALUES
-	(1, 6, 1, 10102),
-	(2, 13, 1, 10312);
+-- Dumping data for table acore_characters.mythic_weekly_progress: ~2 rows (approximately)
+REPLACE INTO `mythic_weekly_progress` (`player_id`, `highest_level`, `reward_date`, `reward_id`, `start_date`) VALUES
+	(1, 1, 1, 10102, 0),
+	(2, 28, 1705700521, 10125, 1705700517);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

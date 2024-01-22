@@ -116,11 +116,51 @@ subFontAttributesInfo:SetFont("Fonts\\FRIZQT__.TTF", 15)
 subFontAttributesInfo:SetSize(300, 400)
 subFontAttributesInfo:SetPoint("TOPLEFT", -20, -45)
 
+-- Create a frame for the timer and loading bar
+local frame = CreateFrame("Frame", "MyTimerFrame", UIParent)
+frame:SetSize(200, 10)
+frame:SetPoint("RIGHT", UIParent, "RIGHT", -130, 130)
 
+-- Create a texture for the loading bar
+local loadingBar = frame:CreateTexture(nil, "ARTWORK")
 
-function MyHandlers.ShowAttributes()
+-- Create a font string for displaying the timer text
+local timerText = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+timerText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+
+-- Set the initial values for the timer
+local elapsedTime = 0
+
+-- Function to start the timer
+function StartTimer(time)
+    elapsedTime = time
+
+    -- Set up the OnUpdate handler to update the loading bar and text
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        elapsedTime = elapsedTime + elapsed
+        loadingBar:SetPoint("CENTER")
+        loadingBar:SetSize(64, 64)
+        loadingBar:SetTexture(0, 1, 0)
+        loadingBar:ClearAllPoints()             -- unsets any existing points
+        loadingBar:SetPoint("CENTER")
+        loadingBar:SetSize(elapsedTime, 64)     -- Adjusted this line
+        timerText:SetText(string.format("%.1f", elapsedTime))
+    end)
+end
+
+function MyHandlers.ShowTimer(player, text)
+    frame:Show()
+    StartTimer(text)
+end
+
+function MyHandlers.HideTimer()
+    frame:Hide()
+end
+
+function MyHandlers.ShowMythicInfo()
     frameAttributes:Show()
 end
+
 function MyHandlers.SetText1(player, text)
     fontAttributesTitleText:SetText("|cffFFC125Mythic Progress Summary|r")
     fontAttributesInfo1:SetText("|cFF000000" .. text .. "|r")
